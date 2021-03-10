@@ -6,5 +6,8 @@
   "repository": "https://github.com/daniel382/users_crud.git",
   "author": "Daniel Lucas <daniellucas382@gmail.com>",
   "license": "GPLv3",
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "eslint": "^7.21.0"
+  }
 }
