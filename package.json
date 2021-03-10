@@ -1,0 +1,10 @@
+{
+  "name": "users_crud",
+  "version": "1.0.0",
+  "description": "A simple CRUD in Node.JS",
+  "main": "index.js",
+  "repository": "https://github.com/daniel382/users_crud.git",
+  "author": "Daniel Lucas <daniellucas382@gmail.com>",
+  "license": "GPLv3",
+  "private": false
+}
