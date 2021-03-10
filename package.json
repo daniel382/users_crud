@@ -21,6 +21,7 @@
   },
   "scripts": {
     "test": "jest --silent --colors --noStackTrace",
-    "test:unit": "yarn test -- --watch -c jest.unit.config.js"
+    "test:unit": "yarn test -- --watch -c jest.unit.config.js",
+    "test:integration": "yarn test -- --watch -c jest.integration.config.js"
   }
 }
