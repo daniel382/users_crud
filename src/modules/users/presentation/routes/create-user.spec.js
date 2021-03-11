@@ -201,7 +201,7 @@ describe('Create User', function () {
     expect(httpResponse.statusCode).toBe(400)
   })
 
-  it('should return 500 if LoadUserByEmailRepoSpy throws', async function () {
+  it('should return 500 if LoadUserByEmailRepoitory throws', async function () {
     const { sut } = makeSut()
 
     sut.loadUserByEmailRepository = makeLoadUserByEmailRepositoryWithThrow()
