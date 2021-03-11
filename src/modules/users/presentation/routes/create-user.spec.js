@@ -96,10 +96,13 @@ function makeGenerateAccessTokenSpy () {
   class GenerateAccessTokenSpy {
     async sign (data) {
       this.userId = data
+      return this.token
     }
   }
 
-  return new GenerateAccessTokenSpy()
+  const generateAccessTokenSpy = new GenerateAccessTokenSpy()
+  generateAccessTokenSpy.token = 'any_token'
+  return generateAccessTokenSpy
 }
 function makeCreateUserRepositoryWithThrow () {
   class CreateUserRepositorySpyWithThrow {
@@ -340,7 +343,8 @@ describe('Create User', function () {
       _id: 'any_id',
       name: 'any_name',
       email: 'any_email',
-      password: 'any_hashed_password'
+      password: 'any_hashed_password',
+      token: 'any_token'
     }
 
     const httpResponse = await sut.store(httpRequest)
@@ -362,5 +366,24 @@ describe('Create User', function () {
 
     await sut.store(httpRequest)
     expect(generateAccessTokenSpy.userId).toEqual({ id: 'any_id' })
+  })
+
+  it('should return an access token', async function () {
+    const { sut, generateAccessTokenSpy } = makeSut()
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toHaveProperty('token')
+    expect(httpResponse.body.token).toBe(generateAccessTokenSpy.token)
   })
 })

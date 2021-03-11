@@ -53,8 +53,9 @@ class CreateUser {
 
       const newUser = await this.createUserRepository.save(user)
 
-      this.generateAccessTokenRepository.sign({ id: newUser._id })
-      return HttpResponse.ok(newUser)
+      const token = await this.generateAccessTokenRepository.sign({ id: newUser._id })
+
+      return HttpResponse.ok({ ...newUser, token })
       //
     } catch (err) {
       return HttpResponse.serverError()
