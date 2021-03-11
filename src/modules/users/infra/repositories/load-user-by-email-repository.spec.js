@@ -1,7 +1,7 @@
 const LoadUserByEmailRepository = require('./load-user-by-email-repository')
 const MissingParamError = require('../../presentation/errors/missing-param-error')
 const userModel = require('../../domain/entity/model/user-model')
-const mongoHelper = require('../../../../utils/repository/mongo-helper')
+const mongoHelper = require('../../../../utils/infra/repository/mongo-helper')
 
 function makeSut () {
   const sut = new LoadUserByEmailRepository(userModel)
