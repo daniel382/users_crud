@@ -11,6 +11,10 @@ class ListUserByIdRouter {
       return HttpResponse.serverError()
     }
 
+    if (!this.loadUserByEmailRepository.load) {
+      return HttpResponse.serverError()
+    }
+
     const { params: { id } } = httpRequest
     if (!id) {
       return HttpResponse.badRequest(new MissingParamError('id'))
@@ -68,7 +72,20 @@ describe('ListUsersRouter', function () {
     const sut = new ListUserByIdRouter()
     const httpRequest = {
       params: {
-        id: 'no_registered_id'
+        id: 'any_id'
+      }
+    }
+
+    const httpResponse = await sut.route(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('shoud return 500 if an invalid LoadUserByIdRepository is provided', async function () {
+    const sut = new ListUserByIdRouter({})
+    const httpRequest = {
+      params: {
+        id: 'any_id'
       }
     }
 
