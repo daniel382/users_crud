@@ -5,8 +5,8 @@ class ExpressAdapter {
         body: req.body
       }
 
-      const httpResponse = router.route(httpRequest)
-      res.status(httpRequest.statusCode).json(httpResponse.body)
+      const { statusCode, body } = await router.route(httpRequest)
+      res.status(statusCode).json(body)
     }
   }
 }
