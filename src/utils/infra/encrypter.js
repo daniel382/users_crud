@@ -1,4 +1,4 @@
-const MissingParamError = require('../presentation/errors/missing-param-error')
+const MissingParamError = require('../../modules/users/presentation/errors/missing-param-error')
 
 class Encrypter {
   constructor (crypter) {
