@@ -2,6 +2,8 @@ const userModel = require('../../domain/entity/model/user-model')
 const MissingParamError = require('../../presentation/errors/missing-param-error')
 const InvalidParamError = require('../../presentation/errors/invalid-param-error')
 
+const mongoHelper = require('../../../../utils/repository/mongo-helper')
+
 class CreateUserRepository {
   constructor (userModel) {
     this.userModel = userModel
@@ -20,6 +22,12 @@ class CreateUserRepository {
     if (!name || !email || !password) {
       throw new InvalidParamError('user')
     }
+
+    return await this.userModel.create({
+      name,
+      email,
+      password
+    })
   }
 }
 
@@ -29,6 +37,18 @@ function makeSut () {
 }
 
 describe('CreateUserRepository', function () {
+  beforeAll(async function () {
+    await mongoHelper.connect(process.env.MONGO_URL)
+  })
+
+  afterAll(async function () {
+    await mongoHelper.disconnect()
+  })
+
+  beforeEach(async function () {
+    await userModel.deleteMany()
+  })
+
   it('should throw if no user is provided', function () {
     const { sut } = makeSut()
     const promise = sut.save()
@@ -55,6 +75,22 @@ describe('CreateUserRepository', function () {
 
     const promise = sut.save(invalidUser)
 
-    expect(promise).rejects.toThrow(new InvalidParamError('user '))
+    expect(promise).rejects.toThrow(new InvalidParamError('user'))
+  })
+
+  it('should create an user', async function () {
+    const { sut } = makeSut()
+    const user = {
+      name: 'any_name',
+      email: 'any@email.com',
+      password: 'any_password'
+    }
+
+    const newUser = await sut.save(user)
+
+    expect(newUser).toHaveProperty('_id')
+    expect(newUser.name).toBe(user.name)
+    expect(newUser.email).toBe(user.email)
+    expect(newUser.password).toBe(user.password)
   })
 })
