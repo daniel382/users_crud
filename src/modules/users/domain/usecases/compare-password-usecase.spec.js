@@ -9,6 +9,8 @@ class ComparePasswordUseCase {
     if (!repeatPassword) {
       throw new MissingParamError('repeatPassword')
     }
+
+    return false
   }
 }
 
@@ -28,5 +30,12 @@ describe('ComparePasswordUseCase', function () {
     const call = _ => sut.compare('any_password')
 
     expect(call).toThrow(new MissingParamError('repeatPassword'))
+  })
+
+  it('should return false if password and repeatPassword are not equal', function () {
+    const { sut } = makeSut()
+    const isEqual = sut.compare('any_password', 'any_other_password')
+
+    expect(isEqual).toBe(false)
   })
 })
