@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "node src/main/index.js",
-    "test": "jest --colors --noStackTrace",
+    "test": "jest --colors --noStackTrace --runInBand",
     "test:unit": "yarn test --watch -c jest.unit.config.js",
     "test:integration": "yarn test --watch -c jest.integration.config.js",
     "test:staged": "yarn test --passWithNoTests --findRelatedTests --silent",
