@@ -48,10 +48,25 @@ function makeHashPasswordWithThrow () {
 }
 
 describe('Create User', function () {
+  it('should return 400 if no name is provided', async function () {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
   it('should return 400 if no email is provided', async function () {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
+        name: 'any_name',
         password: 'any_password',
         repeatPassword: 'any_password'
       }
@@ -65,6 +80,7 @@ describe('Create User', function () {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
+        name: 'any_name',
         email: 'any_email',
         repeatPassword: 'any_password'
       }
@@ -78,6 +94,7 @@ describe('Create User', function () {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
+        name: 'any_name',
         email: 'any_email',
         password: 'any_password'
       }
@@ -91,6 +108,7 @@ describe('Create User', function () {
     const { sut, comparePasswordUseCaseSpy } = makeSut()
     const httpRequest = {
       body: {
+        name: 'any_name',
         email: 'any_email',
         password: 'any_password',
         repeatPassword: 'other_password'
@@ -106,6 +124,7 @@ describe('Create User', function () {
     const { sut, comparePasswordUseCaseSpy } = makeSut()
     const httpRequest = {
       body: {
+        name: 'any_name',
         email: 'any_email',
         password: 'any_password',
         repeatPassword: 'any_password'
@@ -122,6 +141,7 @@ describe('Create User', function () {
     const { sut, hashPasswordSpy } = makeSut()
     const httpRequest = {
       body: {
+        name: 'any_name',
         email: 'any_email',
         password: 'any_password',
         repeatPassword: 'any_password'
@@ -141,6 +161,7 @@ describe('Create User', function () {
 
     const httpRequest = {
       body: {
+        name: 'any_name',
         email: 'any_email',
         password: 'any_password',
         repeatPassword: 'any_password'

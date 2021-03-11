@@ -8,7 +8,11 @@ class CreateUser {
   }
 
   async store (httpRequest) {
-    const { email, password, repeatPassword } = httpRequest.body
+    const { name, email, password, repeatPassword } = httpRequest.body
+
+    if (!name) {
+      return HttpResponse.badRequest(new MissingParamError('name'))
+    }
 
     if (!email) {
       return HttpResponse.badRequest(new MissingParamError('email'))
