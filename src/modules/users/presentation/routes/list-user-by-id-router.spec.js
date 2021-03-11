@@ -23,7 +23,7 @@ class ListUserByIdRouter {
     const user = await this.loadUserByEmailRepository.load(id)
 
     if (!user) {
-      return HttpResponse.ok([])
+      return HttpResponse.ok({ msg: 'User not found' })
     }
 
     return HttpResponse.ok(user)
@@ -65,7 +65,7 @@ describe('ListUsersRouter', function () {
     expect(httpResponse.statusCode).toBe(400)
   })
 
-  it('shoud return an empty list if no user is found', async function () {
+  it('shoud return an message if no user is found', async function () {
     const { sut, loadUserByEmailRepositorySpy } = makeSut()
     const httpRequest = {
       params: {
@@ -77,7 +77,7 @@ describe('ListUsersRouter', function () {
     const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual([])
+    expect(httpResponse.body).toEqual({ msg: 'User not found' })
   })
 
   it('shoud return 500 if no LoadUserByIdRepository is provided', async function () {
