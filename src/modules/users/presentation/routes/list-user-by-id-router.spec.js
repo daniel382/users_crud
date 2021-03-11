@@ -1,10 +1,10 @@
 const ListUserByIdRouter = require('./list-user-by-id-router')
 
 function makeSut () {
-  const loadUserByEmailRepositorySpy = makeLoadUserByIdRepositorySpy()
+  const loadUserByIdRepositorySpy = makeLoadUserByIdRepositorySpy()
 
-  const sut = new ListUserByIdRouter(loadUserByEmailRepositorySpy)
-  return { sut, loadUserByEmailRepositorySpy }
+  const sut = new ListUserByIdRouter(loadUserByIdRepositorySpy)
+  return { sut, loadUserByIdRepositorySpy }
 }
 
 function makeLoadUserByIdRepositorySpy () {
@@ -15,12 +15,12 @@ function makeLoadUserByIdRepositorySpy () {
     }
   }
 
-  const loadUserByEmailRepositorySpy = new LoadUserByIdRepositorySpy()
-  loadUserByEmailRepositorySpy.user = {
+  const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy()
+  loadUserByIdRepositorySpy.user = {
     _id: 'any_id'
   }
 
-  return loadUserByEmailRepositorySpy
+  return loadUserByIdRepositorySpy
 }
 
 describe('ListUsersRouter', function () {
@@ -35,15 +35,15 @@ describe('ListUsersRouter', function () {
     expect(httpResponse.statusCode).toBe(400)
   })
 
-  it('shoud return an message if no user is found', async function () {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut()
+  it('shoud return a message if no user is found', async function () {
+    const { sut, loadUserByIdRepositorySpy } = makeSut()
     const httpRequest = {
       params: {
         id: 'no_registered_id'
       }
     }
 
-    loadUserByEmailRepositorySpy.user = null
+    loadUserByIdRepositorySpy.user = null
     const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
@@ -77,7 +77,7 @@ describe('ListUsersRouter', function () {
   })
 
   it('shoud call LoadUserByIdRepository with correct values', async function () {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut()
+    const { sut, loadUserByIdRepositorySpy } = makeSut()
     const httpRequest = {
       params: {
         id: 'any_id'
@@ -86,7 +86,7 @@ describe('ListUsersRouter', function () {
 
     await sut.route(httpRequest)
 
-    expect(loadUserByEmailRepositorySpy.id).toBe('any_id')
+    expect(loadUserByIdRepositorySpy.id).toBe('any_id')
   })
 
   it('shoud return an user if it is found', async function () {

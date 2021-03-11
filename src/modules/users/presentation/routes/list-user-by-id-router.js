@@ -2,16 +2,16 @@ const MissingParamError = require('../../../../utils/presentation/errors/missing
 const HttpResponse = require('../../../../utils/presentation/helpers/http-response')
 
 class ListUserByIdRouter {
-  constructor (loadUserByEmailRepository) {
-    this.loadUserByEmailRepository = loadUserByEmailRepository
+  constructor (loadUserByIdRepository) {
+    this.loadUserByIdRepository = loadUserByIdRepository
   }
 
   async route (httpRequest) {
-    if (!this.loadUserByEmailRepository) {
+    if (!this.loadUserByIdRepository) {
       return HttpResponse.serverError()
     }
 
-    if (!this.loadUserByEmailRepository.load) {
+    if (!this.loadUserByIdRepository.load) {
       return HttpResponse.serverError()
     }
 
@@ -20,7 +20,7 @@ class ListUserByIdRouter {
       return HttpResponse.badRequest(new MissingParamError('id'))
     }
 
-    const user = await this.loadUserByEmailRepository.load(id)
+    const user = await this.loadUserByIdRepository.load(id)
 
     if (!user) {
       return HttpResponse.ok({ msg: 'User not found' })
