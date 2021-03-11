@@ -1,8 +1,8 @@
 class CreateUser {
   async store (httpRequest) {
-    const { email, password } = httpRequest.body
+    const { email, password, repeatPassword } = httpRequest.body
 
-    if (!email || !password) {
+    if (!email || !password || !repeatPassword) {
       return { statusCode: 400 }
     }
   }
@@ -34,6 +34,19 @@ describe('Create User', function () {
       body: {
         email: 'any_email',
         repeatPassword: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  it('should return 400 if no repeatPassword is provided', async function () {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password'
       }
     }
 
