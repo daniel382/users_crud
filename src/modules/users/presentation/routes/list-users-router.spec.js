@@ -14,7 +14,8 @@ class ListUsersRouter {
       return HttpResponse.serverError()
     }
 
-    return HttpResponse.ok([])
+    const users = await this.listUsersRepository.list()
+    return HttpResponse.ok(users)
   }
 }
 
@@ -28,11 +29,18 @@ function makeSut () {
 function makeListUsersRepositorySpy () {
   class ListUsersRepositorySpy {
     async list () {
-
+      return this.users
     }
   }
 
   const listUsersRepositorySpy = new ListUsersRepositorySpy()
+  listUsersRepositorySpy.users = [{
+    _id: 'user01_id',
+    name: 'user01',
+    email: 'user01@email.com',
+    password: 'user01_password'
+  }]
+
   return listUsersRepositorySpy
 }
 
@@ -52,9 +60,17 @@ describe('ListUsersRouter', function () {
   })
 
   it('should return an empty list if no user is found', async function () {
-    const { sut } = makeSut()
+    const { sut, listUsersRepositorySpy } = makeSut()
 
+    listUsersRepositorySpy.users = []
     const httpResponse = await sut.route()
     expect(httpResponse.body).toEqual([])
+  })
+
+  it('should return a list of users', async function () {
+    const { sut, listUsersRepositorySpy } = makeSut()
+
+    const httpResponse = await sut.route()
+    expect(httpResponse.body).toEqual(listUsersRepositorySpy.users)
   })
 })
