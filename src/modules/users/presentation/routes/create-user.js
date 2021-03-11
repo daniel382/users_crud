@@ -1,6 +1,7 @@
 class CreateUser {
-  constructor (comparePasswordUseCase) {
+  constructor (comparePasswordUseCase, hashPassword) {
     this.comparePasswordUseCase = comparePasswordUseCase
+    this.hashPassword = hashPassword
   }
 
   async store (httpRequest) {
@@ -13,6 +14,8 @@ class CreateUser {
     if (!this.comparePasswordUseCase.compare(password, repeatPassword)) {
       return { statusCode: 400 }
     }
+
+    this.hashPassword.hash(password)
   }
 }
 
