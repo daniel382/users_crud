@@ -23,7 +23,8 @@ class GenerateAccessTokenRepository {
     }
 
     const SEVEN_DAYS = 1000 * 60 * 60 * 24 * 7
-    this.tokenGenerator.sign(data, config.secret, {
+
+    return this.tokenGenerator.sign(data, config.secret, {
       expiresIn: SEVEN_DAYS
     })
   }
@@ -66,5 +67,12 @@ describe('GenerateAccessTokenRepository', function () {
     expect(jwt.data).toBe('any_data')
     expect(jwt.secret).toBe(config.secret)
     expect(jwt.options).toEqual({ expiresIn: SEVEN_DAYS })
+  })
+
+  it('should return an access token', async function () {
+    const { sut } = makeSut()
+    const accessToken = await sut.sign('any_data')
+
+    expect(accessToken).toBe('any_token')
   })
 })

@@ -3,6 +3,8 @@ class Jsonwebtoken {
     this.data = data
     this.secret = secret
     this.options = options
+
+    return 'any_token'
   }
 }
 
