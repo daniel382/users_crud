@@ -29,11 +29,13 @@ function makeComparePasswordUseCaseSpy () {
       this.password = password
       this.repeatPassword = repeatPassword
 
-      return false
+      return this.isEqual
     }
   }
 
-  return new ComparePasswordUseCaseSpy()
+  const comparePasswordUseCaseSpy = new ComparePasswordUseCaseSpy()
+  comparePasswordUseCaseSpy.isEqual = true
+  return comparePasswordUseCaseSpy
 }
 
 describe('Create User', function () {
@@ -77,7 +79,7 @@ describe('Create User', function () {
   })
 
   it('should return 400 if password and repeatPassword are not equal', async function () {
-    const { sut } = makeSut()
+    const { sut, comparePasswordUseCaseSpy } = makeSut()
     const httpRequest = {
       body: {
         email: 'any_email',
@@ -86,6 +88,7 @@ describe('Create User', function () {
       }
     }
 
+    comparePasswordUseCaseSpy.isEqual = false
     const httpResponse = await sut.store(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
