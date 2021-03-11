@@ -4,7 +4,7 @@ const userModel = require('../../domain/entity/model/user-model')
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 const InvalidParamError = require('../../../../utils/presentation/errors/invalid-param-error')
 
-const mongoHelper = require('../../../../utils/infra/repository/mongo-helper')
+const mongoHelper = require('../../../../lib/database')
 
 function makeSut () {
   const sut = new CreateUserRepository(userModel)
