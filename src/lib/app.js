@@ -1,5 +1,7 @@
 const express = require('express')
 
+const userRoutes = require('../modules/users/main/routes')
+
 class App {
   constructor () {
     this.app = express()
@@ -14,6 +16,8 @@ class App {
 
     this.app.use((req, res, next) => {
       res.type('application/json')
+
+      next()
     })
 
     this.app.use((req, res, next) => {
@@ -26,7 +30,7 @@ class App {
   }
 
   routes () {
-
+    this.app.use('/', userRoutes)
   }
 }
 
