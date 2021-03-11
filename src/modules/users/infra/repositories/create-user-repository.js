@@ -1,5 +1,5 @@
-const MissingParamError = require('../../presentation/errors/missing-param-error')
-const InvalidParamError = require('../../presentation/errors/invalid-param-error')
+const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
+const InvalidParamError = require('../../../../utils/presentation/errors/invalid-param-error')
 
 class CreateUserRepository {
   constructor (userModel) {

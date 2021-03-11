@@ -1,5 +1,5 @@
-const HttpResponse = require('../helpers/http-response')
-const MissingParamError = require('../errors/missing-param-error')
+const HttpResponse = require('../../../../utils/presentation/helpers/http-response')
+const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 
 class CreateUser {
   constructor (

@@ -1,4 +1,4 @@
-const MissingParamError = require('../../presentation/errors/missing-param-error')
+const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 
 class LoadUserByEmailRepository {
   constructor (userModel) {

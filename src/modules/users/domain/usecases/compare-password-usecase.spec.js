@@ -1,5 +1,5 @@
 const ComparePasswordUseCase = require('./compare-password-usecase')
-const MissingParamError = require('../../presentation/errors/missing-param-error')
+const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 
 function makeSut () {
   const sut = new ComparePasswordUseCase()
