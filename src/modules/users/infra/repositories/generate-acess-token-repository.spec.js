@@ -1,6 +1,11 @@
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
+const InvalidParamError = require('../../../../utils/presentation/errors/invalid-param-error')
 
 class GenerateAccessTokenRepository {
+  constructor (tokenGenerator) {
+    this.tokenGenerator = tokenGenerator
+  }
+
   async sign (data) {
     if (!data) {
       throw new MissingParamError('data')
@@ -8,6 +13,10 @@ class GenerateAccessTokenRepository {
 
     if (!this.tokenGenerator) {
       throw new MissingParamError('TokenGenerator')
+    }
+
+    if (!this.tokenGenerator.sign) {
+      throw new InvalidParamError('TokenGenerator')
     }
   }
 }
@@ -30,5 +39,13 @@ describe('GenerateAccessTokenRepository', function () {
     const promise = sut.sign('any_data')
 
     expect(promise).rejects.toThrow(new MissingParamError('TokenGenerator'))
+  })
+
+  it('should throw if an invalid tokenGenerator is provided', function () {
+    const invalidTokenGenerator = {}
+    const sut = new GenerateAccessTokenRepository(invalidTokenGenerator)
+    const promise = sut.sign('any_data')
+
+    expect(promise).rejects.toThrow(new InvalidParamError('TokenGenerator'))
   })
 })
