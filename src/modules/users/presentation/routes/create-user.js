@@ -1,3 +1,5 @@
+const HttpResponse = require('../helpers/http-response')
+
 class CreateUser {
   constructor (comparePasswordUseCase, hashPassword) {
     this.comparePasswordUseCase = comparePasswordUseCase
@@ -8,11 +10,11 @@ class CreateUser {
     const { email, password, repeatPassword } = httpRequest.body
 
     if (!email || !password || !repeatPassword) {
-      return { statusCode: 400 }
+      return HttpResponse.badRequest(new Error('Missing param'))
     }
 
     if (!this.comparePasswordUseCase.compare(password, repeatPassword)) {
-      return { statusCode: 400 }
+      return HttpResponse.badRequest(new Error('Invalid param'))
     }
 
     this.hashPassword.hash(password)
