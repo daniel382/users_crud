@@ -14,7 +14,11 @@ class ListUsersRouter {
       return HttpResponse.serverError()
     }
 
-    const users = await this.listUsersRepository.list()
+    const page = (httpRequest.query.page - 1) || 0
+    const limit = (httpRequest.query.limit) || 10
+
+    const users = await this.listUsersRepository.list(page, limit)
+
     return HttpResponse.ok(users)
   }
 }
@@ -28,7 +32,10 @@ function makeSut () {
 
 function makeListUsersRepositorySpy () {
   class ListUsersRepositorySpy {
-    async list () {
+    async list (page, limit) {
+      this.page = page
+      this.limit = limit
+
       return this.users
     }
   }
@@ -61,16 +68,34 @@ describe('ListUsersRouter', function () {
 
   it('should return an empty list if no user is found', async function () {
     const { sut, listUsersRepositorySpy } = makeSut()
+    const httpRequest = {
+      query: {}
+    }
 
     listUsersRepositorySpy.users = []
-    const httpResponse = await sut.route()
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.body).toEqual([])
   })
 
   it('should return a list of users', async function () {
     const { sut, listUsersRepositorySpy } = makeSut()
+    const httpRequest = {
+      query: {}
+    }
 
-    const httpResponse = await sut.route()
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.body).toEqual(listUsersRepositorySpy.users)
+  })
+
+  it('should call ListUsersRepository with default values', async function () {
+    const { sut, listUsersRepositorySpy } = makeSut()
+    const httpRequest = {
+      query: {}
+    }
+
+    await sut.route(httpRequest)
+
+    expect(listUsersRepositorySpy.page).toBe(0)
+    expect(listUsersRepositorySpy.limit).toBe(10)
   })
 })
