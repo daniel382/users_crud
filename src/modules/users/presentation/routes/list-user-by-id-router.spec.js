@@ -2,7 +2,15 @@ const MissingParamError = require('../../../../utils/presentation/errors/missing
 const HttpResponse = require('../../../../utils/presentation/helpers/http-response')
 
 class ListUserByIdRouter {
+  constructor (loadUserByEmailRepository) {
+    this.loadUserByEmailRepository = loadUserByEmailRepository
+  }
+
   async route (httpRequest) {
+    if (!this.loadUserByEmailRepository) {
+      return HttpResponse.serverError()
+    }
+
     const { params: { id } } = httpRequest
     if (!id) {
       return HttpResponse.badRequest(new MissingParamError('id'))
@@ -13,8 +21,21 @@ class ListUserByIdRouter {
 }
 
 function makeSut () {
-  const sut = new ListUserByIdRouter()
-  return { sut }
+  const loadUserByEmailRepositorySpy = makeLoadUserByIdRepositorySpy()
+
+  const sut = new ListUserByIdRouter(loadUserByEmailRepositorySpy)
+  return { sut, loadUserByEmailRepositorySpy }
+}
+
+function makeLoadUserByIdRepositorySpy () {
+  class LoadUserByIdRepositorySpy {
+    async load (id) {
+
+    }
+  }
+
+  const loadUserByEmailRepositorySpy = new LoadUserByIdRepositorySpy()
+  return loadUserByEmailRepositorySpy
 }
 
 describe('ListUsersRouter', function () {
@@ -41,5 +62,18 @@ describe('ListUsersRouter', function () {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual([])
+  })
+
+  it('shoud return 500 if no LoadUserByIdRepository is provided', async function () {
+    const sut = new ListUserByIdRouter()
+    const httpRequest = {
+      params: {
+        id: 'no_registered_id'
+      }
+    }
+
+    const httpResponse = await sut.route(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(500)
   })
 })
