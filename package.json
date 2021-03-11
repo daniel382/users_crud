@@ -2,7 +2,7 @@
   "name": "users_crud",
   "version": "1.0.0",
   "description": "A simple CRUD in Node.JS",
-  "main": "index.js",
+  "main": "src/lib/index.js",
   "repository": "https://github.com/daniel382/users_crud.git",
   "author": "Daniel Lucas <daniellucas382@gmail.com>",
   "license": "LGPL-3.0-only",
@@ -27,6 +27,7 @@
     "mongoose": "^5.11.19"
   },
   "scripts": {
+    "start": "node src/main/index.js",
     "test": "jest --colors --noStackTrace",
     "test:unit": "yarn test --watch -c jest.unit.config.js",
     "test:integration": "yarn test --watch -c jest.integration.config.js",
