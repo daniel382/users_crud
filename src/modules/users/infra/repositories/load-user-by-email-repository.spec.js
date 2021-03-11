@@ -1,8 +1,7 @@
-const mongoose = require('mongoose')
-
-const userModel = require('../../domain/entity/model/user-model')
-const MissingParamError = require('../../presentation/errors/missing-param-error')
 const LoadUserByEmailRepository = require('./load-user-by-email-repository')
+const MissingParamError = require('../../presentation/errors/missing-param-error')
+const userModel = require('../../domain/entity/model/user-model')
+const mongoHelper = require('../../../../utils/repository/mongo-helper')
 
 function makeSut () {
   const sut = new LoadUserByEmailRepository(userModel)
@@ -10,20 +9,12 @@ function makeSut () {
 }
 
 describe('LoadUserByEmailRepository', function () {
-  let connection
-
   beforeAll(async function () {
-    const conn = await mongoose.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true
-    })
-
-    connection = conn.connection
+    await mongoHelper.connect(process.env.MONGO_URL)
   })
 
   afterAll(async function () {
-    await connection.close()
+    await mongoHelper.disconnect()
   })
 
   beforeEach(async function () {
