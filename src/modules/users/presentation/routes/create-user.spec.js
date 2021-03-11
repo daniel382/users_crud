@@ -5,12 +5,14 @@ function makeSut () {
   const hashPasswordSpy = makeHashPassword()
   const createUserRepoSpy = makeCreateUserRepository()
   const loadUserByEmailRepoSpy = makeLoadUserByEmailRepositorySpy()
+  const generateAccessTokenSpy = makeGenerateAccessTokenSpy()
 
   const sut = new CreateUser(
     comparePasswordUseCaseSpy,
     hashPasswordSpy,
     createUserRepoSpy,
-    loadUserByEmailRepoSpy
+    loadUserByEmailRepoSpy,
+    generateAccessTokenSpy
   )
 
   return {
@@ -18,7 +20,8 @@ function makeSut () {
     comparePasswordUseCaseSpy,
     hashPasswordSpy,
     createUserRepoSpy,
-    loadUserByEmailRepoSpy
+    loadUserByEmailRepoSpy,
+    generateAccessTokenSpy
   }
 }
 
@@ -89,6 +92,15 @@ function makeHashPasswordWithThrow () {
   return hashPasswordSpy
 }
 
+function makeGenerateAccessTokenSpy () {
+  class GenerateAccessTokenSpy {
+    async sign (data) {
+      this.userId = data
+    }
+  }
+
+  return new GenerateAccessTokenSpy()
+}
 function makeCreateUserRepositoryWithThrow () {
   class CreateUserRepositorySpyWithThrow {
     async save (user) {
@@ -334,5 +346,21 @@ describe('Create User', function () {
     const httpResponse = await sut.store(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual(newUser)
+  })
+
+  it('should call GenerateAccessToken with correct values', async function () {
+    const { sut, generateAccessTokenSpy } = makeSut()
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    await sut.store(httpRequest)
+    expect(generateAccessTokenSpy.userId).toEqual({ id: 'any_id' })
   })
 })

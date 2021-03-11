@@ -6,12 +6,14 @@ class CreateUser {
     comparePasswordUseCase,
     hashPassword,
     createUserRepository,
-    loadUserByEmailRepository
+    loadUserByEmailRepository,
+    generateAccessTokenRepository
   ) {
     this.comparePasswordUseCase = comparePasswordUseCase
     this.hashPassword = hashPassword
     this.createUserRepository = createUserRepository
     this.loadUserByEmailRepository = loadUserByEmailRepository
+    this.generateAccessTokenRepository = generateAccessTokenRepository
   }
 
   async store (httpRequest) {
@@ -51,6 +53,7 @@ class CreateUser {
 
       const newUser = await this.createUserRepository.save(user)
 
+      this.generateAccessTokenRepository.sign({ id: newUser._id })
       return HttpResponse.ok(newUser)
       //
     } catch (err) {
