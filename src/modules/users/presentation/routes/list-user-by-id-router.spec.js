@@ -20,6 +20,7 @@ class ListUserByIdRouter {
       return HttpResponse.badRequest(new MissingParamError('id'))
     }
 
+    this.loadUserByEmailRepository.load(id)
     return HttpResponse.ok([])
   }
 }
@@ -34,7 +35,7 @@ function makeSut () {
 function makeLoadUserByIdRepositorySpy () {
   class LoadUserByIdRepositorySpy {
     async load (id) {
-
+      this.id = id
     }
   }
 
@@ -92,5 +93,18 @@ describe('ListUsersRouter', function () {
     const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('shoud call LoadUserByIdRepository with correct values', async function () {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut()
+    const httpRequest = {
+      params: {
+        id: 'any_id'
+      }
+    }
+
+    await sut.route(httpRequest)
+
+    expect(loadUserByEmailRepositorySpy.id).toBe('any_id')
   })
 })
