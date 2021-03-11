@@ -13,6 +13,10 @@ class LoadUserByEmailRepository {
       throw new MissingParamError('email')
     }
 
+    if (!this.userModel) {
+      throw new MissingParamError('UserModel')
+    }
+
     const result = await this.userModel.find({ email })
     const user = result[0]
 
@@ -71,5 +75,12 @@ describe('LoadUserByEmailRepository', function () {
 
     const promise = sut.load()
     expect(promise).rejects.toThrow(new MissingParamError('email'))
+  })
+
+  it('should throw if no userModel is provided', function () {
+    const sut = new LoadUserByEmailRepository()
+
+    const promise = sut.load('any_email')
+    expect(promise).rejects.toThrow(new MissingParamError('UserModel'))
   })
 })
