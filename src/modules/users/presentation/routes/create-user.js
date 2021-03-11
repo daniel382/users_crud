@@ -39,7 +39,10 @@ class CreateUser {
         password: hashedPassword
       }
 
-      await this.createUserRepository.save(user)
+      const newUser = await this.createUserRepository.save(user)
+
+      return HttpResponse.ok(newUser)
+      //
     } catch (err) {
       return HttpResponse.serverError()
     }

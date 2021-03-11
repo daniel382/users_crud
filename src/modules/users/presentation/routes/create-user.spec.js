@@ -42,6 +42,8 @@ function makeCreateUserRepository () {
   class CreateUserRepositorySpy {
     async save (user) {
       this.user = user
+      user._id = 'any_id'
+      return user
     }
   }
 
@@ -211,6 +213,7 @@ describe('Create User', function () {
     }
 
     const user = {
+      _id: 'any_id',
       name: 'any_name',
       email: 'any_email',
       password: 'any_hashed_password'
@@ -238,5 +241,28 @@ describe('Create User', function () {
 
     const httpResponse = await sut.store(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should return 200 if the user is successfully created', async function () {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    const newUser = {
+      _id: 'any_id',
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_hashed_password'
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual(newUser)
   })
 })

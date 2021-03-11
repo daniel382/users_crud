@@ -1,4 +1,11 @@
 class HttpResponse {
+  static ok (body) {
+    return {
+      statusCode: 200,
+      body
+    }
+  }
+
   static badRequest (error) {
     return {
       statusCode: 400,
