@@ -1,17 +1,36 @@
 class CreateUser {
+  constructor (comparePasswordUseCase) {
+    this.comparePasswordUseCase = comparePasswordUseCase
+  }
+
   async store (httpRequest) {
     const { email, password, repeatPassword } = httpRequest.body
 
     if (!email || !password || !repeatPassword) {
       return { statusCode: 400 }
     }
+
+    if (!this.comparePasswordUseCase.compare(password, repeatPassword)) {
+      return { statusCode: 400 }
+    }
   }
 }
 
 function makeSut () {
-  const sut = new CreateUser()
+  const comparePasswordUseCaseSpy = makeComparePasswordUseCaseSpy()
+  const sut = new CreateUser(comparePasswordUseCaseSpy)
 
-  return { sut }
+  return { sut, comparePasswordUseCaseSpy }
+}
+
+function makeComparePasswordUseCaseSpy () {
+  class ComparePasswordUseCaseSpy {
+    compare () {
+      return false
+    }
+  }
+
+  return new ComparePasswordUseCaseSpy()
 }
 
 describe('Create User', function () {
@@ -47,6 +66,20 @@ describe('Create User', function () {
       body: {
         email: 'any_email',
         password: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  it('should return 400 if password and repeatPassword are not equal', async function () {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'other_password'
       }
     }
 
