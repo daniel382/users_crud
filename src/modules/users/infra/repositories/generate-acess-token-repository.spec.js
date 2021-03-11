@@ -1,5 +1,8 @@
+const jwt = require('../../../../../__mocks__/jsonwebtoken')
+
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 const InvalidParamError = require('../../../../utils/presentation/errors/invalid-param-error')
+const config = require('../../../../config/secret.json')
 
 class GenerateAccessTokenRepository {
   constructor (tokenGenerator) {
@@ -18,11 +21,16 @@ class GenerateAccessTokenRepository {
     if (!this.tokenGenerator.sign) {
       throw new InvalidParamError('TokenGenerator')
     }
+
+    const SEVEN_DAYS = 1000 * 60 * 60 * 24 * 7
+    this.tokenGenerator.sign(data, config.secret, {
+      expiresIn: SEVEN_DAYS
+    })
   }
 }
 
 function makeSut () {
-  const sut = new GenerateAccessTokenRepository()
+  const sut = new GenerateAccessTokenRepository(jwt)
   return { sut }
 }
 
@@ -47,5 +55,16 @@ describe('GenerateAccessTokenRepository', function () {
     const promise = sut.sign('any_data')
 
     expect(promise).rejects.toThrow(new InvalidParamError('TokenGenerator'))
+  })
+
+  it('should call tokenGenerator with correct values', async function () {
+    const { sut } = makeSut()
+    await sut.sign('any_data')
+
+    const SEVEN_DAYS = 1000 * 60 * 60 * 24 * 7
+
+    expect(jwt.data).toBe('any_data')
+    expect(jwt.secret).toBe(config.secret)
+    expect(jwt.options).toEqual({ expiresIn: SEVEN_DAYS })
   })
 })
