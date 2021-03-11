@@ -1,35 +1,10 @@
+const CreateUserRepository = require('./create-user-repository')
+
 const userModel = require('../../domain/entity/model/user-model')
 const MissingParamError = require('../../presentation/errors/missing-param-error')
 const InvalidParamError = require('../../presentation/errors/invalid-param-error')
 
 const mongoHelper = require('../../../../utils/repository/mongo-helper')
-
-class CreateUserRepository {
-  constructor (userModel) {
-    this.userModel = userModel
-  }
-
-  async save (user) {
-    if (!user) {
-      throw new MissingParamError('user')
-    }
-
-    if (!this.userModel) {
-      throw new MissingParamError('UserModel')
-    }
-
-    const { name, email, password } = user
-    if (!name || !email || !password) {
-      throw new InvalidParamError('user')
-    }
-
-    return await this.userModel.create({
-      name,
-      email,
-      password
-    })
-  }
-}
 
 function makeSut () {
   const sut = new CreateUserRepository(userModel)
