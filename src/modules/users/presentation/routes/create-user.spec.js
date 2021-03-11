@@ -25,7 +25,10 @@ function makeSut () {
 
 function makeComparePasswordUseCaseSpy () {
   class ComparePasswordUseCaseSpy {
-    compare () {
+    compare (password, repeatPassword) {
+      this.password = password
+      this.repeatPassword = repeatPassword
+
       return false
     }
   }
@@ -85,5 +88,21 @@ describe('Create User', function () {
 
     const httpResponse = await sut.store(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+  })
+
+  it('should call ComparePasswordUseCase with correct values', async function () {
+    const { sut, comparePasswordUseCaseSpy } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    await sut.store(httpRequest)
+
+    expect(comparePasswordUseCaseSpy.password).toBe('any_password')
+    expect(comparePasswordUseCaseSpy.repeatPassword).toBe('any_password')
   })
 })
