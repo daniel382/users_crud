@@ -98,4 +98,19 @@ describe('ListUsersRouter', function () {
     expect(listUsersRepositorySpy.page).toBe(0)
     expect(listUsersRepositorySpy.limit).toBe(10)
   })
+
+  it('should call ListUsersRepository with correct values', async function () {
+    const { sut, listUsersRepositorySpy } = makeSut()
+    const httpRequest = {
+      query: {
+        page: 2,
+        limit: 5
+      }
+    }
+
+    await sut.route(httpRequest)
+
+    expect(listUsersRepositorySpy.page).toBe(1)
+    expect(listUsersRepositorySpy.limit).toBe(5)
+  })
 })
