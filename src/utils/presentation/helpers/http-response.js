@@ -9,14 +9,18 @@ class HttpResponse {
   static badRequest (error) {
     return {
       statusCode: 400,
-      body: error.message
+      body: {
+        error: error.message
+      }
     }
   }
 
   static serverError () {
     return {
       statusCode: 500,
-      body: new Error('Internal server error').message
+      body: {
+        error: new Error('Internal server error').message
+      }
     }
   }
 }
