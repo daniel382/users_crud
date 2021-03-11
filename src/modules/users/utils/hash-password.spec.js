@@ -1,9 +1,9 @@
 const bcrypt = require('../../../../__mocks__/bcryptjs')
 const MissingParamError = require('../presentation/errors/missing-param-error')
 
-class HashPassword {
-  constructor (crypt) {
-    this.crypt = crypt
+class Encrypter {
+  constructor (crypter) {
+    this.crypter = crypter
   }
 
   async hash (password) {
@@ -11,22 +11,22 @@ class HashPassword {
       throw new MissingParamError('password')
     }
 
-    await this.crypt.hash(password, 10)
+    await this.crypter.hash(password, 10)
   }
 }
 
 function makeSut () {
-  const sut = new HashPassword(bcrypt)
+  const sut = new Encrypter(bcrypt)
   return { sut }
 }
 
-describe('HashPassword', function () {
+describe('Encrypter', function () {
   it('should throw if no password is provided', function () {
     const { sut } = makeSut()
     expect(sut.hash).rejects.toThrow(new MissingParamError('password'))
   })
 
-  it('should call crypt with correct values', async function () {
+  it('should call crypter with correct values', async function () {
     const { sut } = makeSut()
     await sut.hash('any_password')
 
