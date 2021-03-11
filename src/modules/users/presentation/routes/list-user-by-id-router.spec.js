@@ -20,8 +20,13 @@ class ListUserByIdRouter {
       return HttpResponse.badRequest(new MissingParamError('id'))
     }
 
-    this.loadUserByEmailRepository.load(id)
-    return HttpResponse.ok([])
+    const user = await this.loadUserByEmailRepository.load(id)
+
+    if (!user) {
+      return HttpResponse.ok([])
+    }
+
+    return HttpResponse.ok(user)
   }
 }
 
@@ -36,10 +41,15 @@ function makeLoadUserByIdRepositorySpy () {
   class LoadUserByIdRepositorySpy {
     async load (id) {
       this.id = id
+      return this.user
     }
   }
 
   const loadUserByEmailRepositorySpy = new LoadUserByIdRepositorySpy()
+  loadUserByEmailRepositorySpy.user = {
+    _id: 'any_id'
+  }
+
   return loadUserByEmailRepositorySpy
 }
 
@@ -56,13 +66,14 @@ describe('ListUsersRouter', function () {
   })
 
   it('shoud return an empty list if no user is found', async function () {
-    const { sut } = makeSut()
+    const { sut, loadUserByEmailRepositorySpy } = makeSut()
     const httpRequest = {
       params: {
         id: 'no_registered_id'
       }
     }
 
+    loadUserByEmailRepositorySpy.user = null
     const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
@@ -106,5 +117,19 @@ describe('ListUsersRouter', function () {
     await sut.route(httpRequest)
 
     expect(loadUserByEmailRepositorySpy.id).toBe('any_id')
+  })
+
+  it('shoud return an user if it is found', async function () {
+    const { sut } = makeSut()
+    const httpRequest = {
+      params: {
+        id: 'any_id'
+      }
+    }
+
+    const httpResponse = await sut.route(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body._id).toBe('any_id')
   })
 })
