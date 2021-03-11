@@ -101,6 +101,16 @@ function makeCreateUserRepositoryWithThrow () {
   return createUserRepoSpy
 }
 
+function makeLoadUserByEmailRepositoryWithThrow () {
+  class LoadUserByEmailRepositoryWithThrow {
+    async load (email) {
+      throw new Error('')
+    }
+  }
+
+  return new LoadUserByEmailRepositoryWithThrow()
+}
+
 describe('Create User', function () {
   it('should return 400 if no name is provided', async function () {
     const { sut } = makeSut()
@@ -189,6 +199,24 @@ describe('Create User', function () {
 
     const httpResponse = await sut.store(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+  })
+
+  it('should return 500 if LoadUserByEmailRepoSpy throws', async function () {
+    const { sut } = makeSut()
+
+    sut.loadUserByEmailRepository = makeLoadUserByEmailRepositoryWithThrow()
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
   })
 
   it('should call ComparePasswordUseCase with correct values', async function () {

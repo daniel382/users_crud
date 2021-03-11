@@ -37,11 +37,11 @@ class CreateUser {
       return HttpResponse.badRequest(new Error('Password and repeatPassword must be equal'))
     }
 
-    if (await this.loadUserByEmailRepository.load(email)) {
-      return HttpResponse.badRequest(new Error('Email already exists'))
-    }
-
     try {
+      if (await this.loadUserByEmailRepository.load(email)) {
+        return HttpResponse.badRequest(new Error('Email already exists'))
+      }
+
       const hashedPassword = await this.hashPassword.hash(password)
       const user = {
         name,
