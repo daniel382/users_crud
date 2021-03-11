@@ -2,7 +2,8 @@ class ExpressAdapter {
   static adapt (router) {
     return async function (req, res) {
       const httpRequest = {
-        body: req.body
+        body: req.body,
+        params: req.params
       }
 
       const { statusCode, body } = await router.route(httpRequest)
