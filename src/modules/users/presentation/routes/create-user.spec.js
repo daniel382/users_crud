@@ -3,9 +3,11 @@ const CreateUser = require('./create-user')
 function makeSut () {
   const comparePasswordUseCaseSpy = makeComparePasswordUseCaseSpy()
   const hashPasswordSpy = makeHashPassword()
-  const sut = new CreateUser(comparePasswordUseCaseSpy, hashPasswordSpy)
+  const createUserRepoSpy = makeCreateUserRepository()
 
-  return { sut, comparePasswordUseCaseSpy, hashPasswordSpy }
+  const sut = new CreateUser(comparePasswordUseCaseSpy, hashPasswordSpy, createUserRepoSpy)
+
+  return { sut, comparePasswordUseCaseSpy, hashPasswordSpy, createUserRepoSpy }
 }
 
 function makeComparePasswordUseCaseSpy () {
@@ -27,12 +29,25 @@ function makeHashPassword () {
   class HashPasswordSpy {
     async hash (password) {
       this.password = password
+      return 'any_hashed_password'
     }
   }
 
   const hashPasswordSpy = new HashPasswordSpy()
 
   return hashPasswordSpy
+}
+
+function makeCreateUserRepository () {
+  class CreateUserRepositorySpy {
+    async save (user) {
+      this.user = user
+    }
+  }
+
+  const createUserRepoSpy = new CreateUserRepositorySpy()
+
+  return createUserRepoSpy
 }
 
 function makeHashPasswordWithThrow () {
@@ -170,5 +185,27 @@ describe('Create User', function () {
 
     const httpResponse = await sut.store(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should call CreateUserRepository with correct values', async function () {
+    const { sut, createUserRepoSpy } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    const user = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_hashed_password'
+    }
+
+    await sut.store(httpRequest)
+
+    expect(createUserRepoSpy.user).toEqual(user)
   })
 })

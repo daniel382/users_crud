@@ -2,9 +2,10 @@ const HttpResponse = require('../helpers/http-response')
 const MissingParamError = require('../errors/missing-param-error')
 
 class CreateUser {
-  constructor (comparePasswordUseCase, hashPassword) {
+  constructor (comparePasswordUseCase, hashPassword, createUserRepository) {
     this.comparePasswordUseCase = comparePasswordUseCase
     this.hashPassword = hashPassword
+    this.createUserRepository = createUserRepository
   }
 
   async store (httpRequest) {
@@ -31,7 +32,14 @@ class CreateUser {
     }
 
     try {
-      await this.hashPassword.hash(password)
+      const hashedPassword = await this.hashPassword.hash(password)
+      const user = {
+        name,
+        email,
+        password: hashedPassword
+      }
+
+      await this.createUserRepository.save(user)
     } catch (err) {
       return HttpResponse.serverError()
     }
