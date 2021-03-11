@@ -1,4 +1,5 @@
 const HttpResponse = require('../helpers/http-response')
+const MissingParamError = require('../errors/missing-param-error')
 
 class CreateUser {
   constructor (comparePasswordUseCase, hashPassword) {
@@ -9,12 +10,20 @@ class CreateUser {
   async store (httpRequest) {
     const { email, password, repeatPassword } = httpRequest.body
 
-    if (!email || !password || !repeatPassword) {
-      return HttpResponse.badRequest(new Error('Missing param'))
+    if (!email) {
+      return HttpResponse.badRequest(new MissingParamError('email'))
+    }
+
+    if (!password) {
+      return HttpResponse.badRequest(new MissingParamError('password'))
+    }
+
+    if (!repeatPassword) {
+      return HttpResponse.badRequest(new MissingParamError('repeatPassword'))
     }
 
     if (!this.comparePasswordUseCase.compare(password, repeatPassword)) {
-      return HttpResponse.badRequest(new Error('Invalid param'))
+      return HttpResponse.badRequest(new Error('Password and repeatPassword must be equal'))
     }
 
     this.hashPassword.hash(password)
