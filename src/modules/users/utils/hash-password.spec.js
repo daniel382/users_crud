@@ -11,7 +11,7 @@ class Encrypter {
       throw new MissingParamError('password')
     }
 
-    await this.crypter.hash(password, 10)
+    return await this.crypter.hash(password, 10)
   }
 }
 
@@ -32,5 +32,13 @@ describe('Encrypter', function () {
 
     expect(bcrypt.data).toBe('any_password')
     expect(bcrypt.rounds).toBe(10)
+  })
+
+  it('should return a hashed value', async function () {
+    const { sut } = makeSut()
+    const hashed = await sut.hash('any_password')
+
+    expect(typeof hashed).toBe('string')
+    expect(hashed).toBe('any_hashed_value')
   })
 })
