@@ -62,6 +62,18 @@ function makeHashPasswordWithThrow () {
   return hashPasswordSpy
 }
 
+function makeCreateUserRepositoryWithThrow () {
+  class CreateUserRepositorySpyWithThrow {
+    async save (user) {
+      throw new Error('')
+    }
+  }
+
+  const createUserRepoSpy = new CreateUserRepositorySpyWithThrow()
+
+  return createUserRepoSpy
+}
+
 describe('Create User', function () {
   it('should return 400 if no name is provided', async function () {
     const { sut } = makeSut()
@@ -207,5 +219,24 @@ describe('Create User', function () {
     await sut.store(httpRequest)
 
     expect(createUserRepoSpy.user).toEqual(user)
+  })
+
+  it('should return 500 if CreateUserRepository throws', async function () {
+    const { sut } = makeSut()
+    const createUserRepoSpy = makeCreateUserRepositoryWithThrow()
+
+    sut.createUserRepository = createUserRepoSpy
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
   })
 })
