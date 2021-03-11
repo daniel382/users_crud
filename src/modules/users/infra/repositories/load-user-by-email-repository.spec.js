@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const userModel = require('../../domain/entity/model/user-model')
+const MissingParamError = require('../../presentation/errors/missing-param-error')
 
 class LoadUserByEmailRepository {
   constructor (userModel) {
@@ -8,6 +9,10 @@ class LoadUserByEmailRepository {
   }
 
   async load (email) {
+    if (!email) {
+      throw new MissingParamError('email')
+    }
+
     const result = await this.userModel.find({ email })
     const user = result[0]
 
@@ -59,5 +64,12 @@ describe('LoadUserByEmailRepository', function () {
     const result = await sut.load('any@email.com')
 
     expect(result.email).toBe('any@email.com')
+  })
+
+  it('should throw if no email is provided', function () {
+    const { sut } = makeSut()
+
+    const promise = sut.load()
+    expect(promise).rejects.toThrow(new MissingParamError('email'))
   })
 })
