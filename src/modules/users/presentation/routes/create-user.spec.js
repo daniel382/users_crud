@@ -4,10 +4,22 @@ function makeSut () {
   const comparePasswordUseCaseSpy = makeComparePasswordUseCaseSpy()
   const hashPasswordSpy = makeHashPassword()
   const createUserRepoSpy = makeCreateUserRepository()
+  const loadUserByEmailRepoSpy = makeLoadUserByEmailRepositorySpy()
 
-  const sut = new CreateUser(comparePasswordUseCaseSpy, hashPasswordSpy, createUserRepoSpy)
+  const sut = new CreateUser(
+    comparePasswordUseCaseSpy,
+    hashPasswordSpy,
+    createUserRepoSpy,
+    loadUserByEmailRepoSpy
+  )
 
-  return { sut, comparePasswordUseCaseSpy, hashPasswordSpy, createUserRepoSpy }
+  return {
+    sut,
+    comparePasswordUseCaseSpy,
+    hashPasswordSpy,
+    createUserRepoSpy,
+    loadUserByEmailRepoSpy
+  }
 }
 
 function makeComparePasswordUseCaseSpy () {
@@ -50,6 +62,19 @@ function makeCreateUserRepository () {
   const createUserRepoSpy = new CreateUserRepositorySpy()
 
   return createUserRepoSpy
+}
+
+function makeLoadUserByEmailRepositorySpy () {
+  class LoadUserByEmailRepoSpy {
+    async load (email) {
+      return this.alreadyExists
+    }
+  }
+
+  const loadUserByEmailRepoSpy = new LoadUserByEmailRepoSpy()
+  loadUserByEmailRepoSpy.alreadyExists = false
+
+  return loadUserByEmailRepoSpy
 }
 
 function makeHashPasswordWithThrow () {
@@ -145,6 +170,23 @@ describe('Create User', function () {
     }
 
     comparePasswordUseCaseSpy.isEqual = false
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  it('should return 400 if email already exists', async function () {
+    const { sut, loadUserByEmailRepoSpy } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_duplicated_email',
+        password: 'any_password',
+        repeatPassword: 'other_password'
+      }
+    }
+
+    loadUserByEmailRepoSpy.alreadyExists = true
+
     const httpResponse = await sut.store(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
