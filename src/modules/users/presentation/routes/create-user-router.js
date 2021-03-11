@@ -1,7 +1,7 @@
 const HttpResponse = require('../../../../utils/presentation/helpers/http-response')
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 
-class CreateUser {
+class CreateUserRouter {
   constructor (
     comparePasswordUseCase,
     hashPassword,
@@ -16,7 +16,7 @@ class CreateUser {
     this.generateAccessTokenRepository = generateAccessTokenRepository
   }
 
-  async store (httpRequest) {
+  async route (httpRequest) {
     const { name, email, password, repeatPassword } = httpRequest.body
 
     if (!name) {
@@ -63,4 +63,4 @@ class CreateUser {
   }
 }
 
-module.exports = CreateUser
+module.exports = CreateUserRouter

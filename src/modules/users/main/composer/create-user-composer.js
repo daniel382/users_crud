@@ -2,7 +2,7 @@ const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const userModel = require('../../domain/entity/model/user-model')
-const CreateUser = require('../../presentation/routes/create-user')
+const CreateUserRouter = require('../../presentation/routes/create-user-router')
 
 const ComparePasswordUseCase = require('../../domain/usecases/compare-password-usecase')
 const HashPassword = require('../../../../utils/infra/encrypter')
@@ -18,7 +18,7 @@ class CreateUserRouterComposer {
     const loadUserByEmailRepository = new LoadUserByEmailRepository(userModel)
     const generateAccessTokenRepository = new GenerateAccessTokenRepository(jwt)
 
-    return new CreateUser(
+    return new CreateUserRouter(
       comparePasswordUseCase,
       hashPassword,
       createUserRepository,

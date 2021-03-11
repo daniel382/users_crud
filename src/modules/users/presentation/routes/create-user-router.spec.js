@@ -1,4 +1,4 @@
-const CreateUser = require('./create-user')
+const CreateUserRouter = require('./create-user-router')
 
 function makeSut () {
   const comparePasswordUseCaseSpy = makeComparePasswordUseCaseSpy()
@@ -7,7 +7,7 @@ function makeSut () {
   const loadUserByEmailRepoSpy = makeLoadUserByEmailRepositorySpy()
   const generateAccessTokenSpy = makeGenerateAccessTokenSpy()
 
-  const sut = new CreateUser(
+  const sut = new CreateUserRouter(
     comparePasswordUseCaseSpy,
     hashPasswordSpy,
     createUserRepoSpy,
@@ -104,6 +104,7 @@ function makeGenerateAccessTokenSpy () {
   generateAccessTokenSpy.token = 'any_token'
   return generateAccessTokenSpy
 }
+
 function makeCreateUserRepositoryWithThrow () {
   class CreateUserRepositorySpyWithThrow {
     async save (user) {
@@ -137,7 +138,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
 
@@ -151,7 +152,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
 
@@ -165,7 +166,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
 
@@ -179,7 +180,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
 
@@ -195,7 +196,7 @@ describe('Create User', function () {
     }
 
     comparePasswordUseCaseSpy.isEqual = false
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
 
@@ -212,7 +213,7 @@ describe('Create User', function () {
 
     loadUserByEmailRepoSpy.alreadyExists = true
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
 
@@ -230,7 +231,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
   })
 
@@ -245,7 +246,7 @@ describe('Create User', function () {
       }
     }
 
-    await sut.store(httpRequest)
+    await sut.route(httpRequest)
 
     expect(comparePasswordUseCaseSpy.password).toBe('any_password')
     expect(comparePasswordUseCaseSpy.repeatPassword).toBe('any_password')
@@ -262,7 +263,7 @@ describe('Create User', function () {
       }
     }
 
-    await sut.store(httpRequest)
+    await sut.route(httpRequest)
 
     expect(hashPasswordSpy.password).toBe('any_password')
   })
@@ -282,7 +283,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
   })
 
@@ -304,7 +305,7 @@ describe('Create User', function () {
       password: 'any_hashed_password'
     }
 
-    await sut.store(httpRequest)
+    await sut.route(httpRequest)
 
     expect(createUserRepoSpy.user).toEqual(user)
   })
@@ -324,7 +325,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
   })
 
@@ -347,7 +348,7 @@ describe('Create User', function () {
       token: 'any_token'
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual(newUser)
   })
@@ -364,7 +365,7 @@ describe('Create User', function () {
       }
     }
 
-    await sut.store(httpRequest)
+    await sut.route(httpRequest)
     expect(generateAccessTokenSpy.userId).toEqual({ id: 'any_id' })
   })
 
@@ -380,7 +381,7 @@ describe('Create User', function () {
       }
     }
 
-    const httpResponse = await sut.store(httpRequest)
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('token')
