@@ -5,6 +5,13 @@ class HttpResponse {
       body: error.message
     }
   }
+
+  static serverError () {
+    return {
+      statusCode: 500,
+      body: new Error('Internal server error').message
+    }
+  }
 }
 
 module.exports = HttpResponse

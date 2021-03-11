@@ -26,7 +26,11 @@ class CreateUser {
       return HttpResponse.badRequest(new Error('Password and repeatPassword must be equal'))
     }
 
-    this.hashPassword.hash(password)
+    try {
+      await this.hashPassword.hash(password)
+    } catch (err) {
+      return HttpResponse.serverError()
+    }
   }
 }
 

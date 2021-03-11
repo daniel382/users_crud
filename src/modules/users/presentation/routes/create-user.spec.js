@@ -25,12 +25,24 @@ function makeComparePasswordUseCaseSpy () {
 
 function makeHashPassword () {
   class HashPasswordSpy {
-    hash (password) {
+    async hash (password) {
       this.password = password
     }
   }
 
   const hashPasswordSpy = new HashPasswordSpy()
+
+  return hashPasswordSpy
+}
+
+function makeHashPasswordWithThrow () {
+  class HashPasswordSpyWithThrow {
+    async hash (password) {
+      throw new Error('')
+    }
+  }
+
+  const hashPasswordSpy = new HashPasswordSpyWithThrow()
 
   return hashPasswordSpy
 }
@@ -119,5 +131,23 @@ describe('Create User', function () {
     await sut.store(httpRequest)
 
     expect(hashPasswordSpy.password).toBe('any_password')
+  })
+
+  it('should return 500 if HashPassword throws', async function () {
+    const { sut } = makeSut()
+    const hashPasswordSpy = makeHashPasswordWithThrow()
+
+    sut.hashPassword = hashPasswordSpy
+
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password',
+        repeatPassword: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.store(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
   })
 })
