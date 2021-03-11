@@ -27,7 +27,7 @@
     "mongoose": "^5.11.19"
   },
   "scripts": {
-    "start": "node src/main/index.js",
+    "start": "node src/lib/index.js",
     "test": "jest --colors --noStackTrace --runInBand",
     "test:unit": "yarn test --watch -c jest.unit.config.js",
     "test:integration": "yarn test --watch -c jest.integration.config.js",
