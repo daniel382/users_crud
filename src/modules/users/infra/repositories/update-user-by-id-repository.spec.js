@@ -1,9 +1,25 @@
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
+const userModel = require('../../domain/entity/model/user-model')
 
 class UpdateUserByIdRepository {
-  async update (id, user) {
-    throw new MissingParamError('UserModel')
+  constructor (userModel) {
+    this.userModel = userModel
   }
+
+  async update (id, user) {
+    if (!this.userModel) {
+      throw new MissingParamError('UserModel')
+    }
+
+    if (!id) {
+      throw new MissingParamError('id')
+    }
+  }
+}
+
+function makeSut () {
+  const sut = new UpdateUserByIdRepository(userModel)
+  return { sut }
 }
 
 describe('UpdateUserByIdRepository', function () {
@@ -12,5 +28,12 @@ describe('UpdateUserByIdRepository', function () {
     const promise = sut.update()
 
     expect(promise).rejects.toThrow(new MissingParamError('UserModel'))
+  })
+
+  it('should throw if no id is provided', function () {
+    const { sut } = makeSut()
+    const promise = sut.update()
+
+    expect(promise).rejects.toThrow(new MissingParamError('id'))
   })
 })
