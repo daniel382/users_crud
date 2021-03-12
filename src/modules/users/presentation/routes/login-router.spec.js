@@ -2,6 +2,11 @@ const HttpResponse = require('../../../../utils/presentation/helpers/http-respon
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 
 class LoginRouter {
+  constructor (loadUserByEmailRepository, encrypter) {
+    this.loadUserByEmailRepository = loadUserByEmailRepository
+    this.encrypter = encrypter
+  }
+
   async route (email, password) {
     if (!email) {
       return HttpResponse.badRequest(new MissingParamError('email'))
@@ -11,13 +16,32 @@ class LoginRouter {
       return HttpResponse.badRequest(new MissingParamError('password'))
     }
 
-    return HttpResponse.serverError()
+    if (!this.loadUserByEmailRepository) {
+      return HttpResponse.serverError()
+    }
+
+    if (!this.encrypter) {
+      return HttpResponse.serverError()
+    }
   }
 }
 
 function makeSut () {
-  const sut = new LoginRouter()
-  return { sut }
+  const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
+  const sut = new LoginRouter(loadUserByEmailRepositorySpy)
+  return { sut, loadUserByEmailRepositorySpy }
+}
+
+function makeLoadUserByEmailRepositorySpy () {
+  class LoadUserByEmailRepoSpy {
+    async load (email) {
+
+    }
+  }
+
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepoSpy()
+
+  return loadUserByEmailRepositorySpy
 }
 
 describe('LoginRouter', function () {
@@ -37,6 +61,15 @@ describe('LoginRouter', function () {
 
   it('should return 500 if no LoadUserByEmailRepository is provided', async function () {
     const sut = new LoginRouter()
+    const httpResponse = await sut.route('any@email.com', 'any_password')
+
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should return 500 if no Encrypter is provided', async function () {
+    const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
+    const sut = new LoginRouter(loadUserByEmailRepositorySpy)
+
     const httpResponse = await sut.route('any@email.com', 'any_password')
 
     expect(httpResponse.statusCode).toBe(500)
