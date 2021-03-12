@@ -10,6 +10,8 @@ class LoginRouter {
     if (!password) {
       return HttpResponse.badRequest(new MissingParamError('password'))
     }
+
+    return HttpResponse.serverError()
   }
 }
 
@@ -31,5 +33,12 @@ describe('LoginRouter', function () {
     const httpResponse = await sut.route('any@email.com')
 
     expect(httpResponse.statusCode).toBe(400)
+  })
+
+  it('should return 500 if no LoadUserByEmailRepository is provided', async function () {
+    const sut = new LoginRouter()
+    const httpResponse = await sut.route('any@email.com', 'any_password')
+
+    expect(httpResponse.statusCode).toBe(500)
   })
 })
