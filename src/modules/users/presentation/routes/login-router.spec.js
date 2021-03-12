@@ -62,7 +62,7 @@ function makeGenerateAccessTokenSpy () {
 
 function makeUpdateAccessTokenSpy () {
   class UpdateAccessTokenRepositorySpy {
-    async update (accessToken) {
+    async update (id, accessToken) {
       this.accessToken = accessToken
     }
   }
