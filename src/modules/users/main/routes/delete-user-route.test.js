@@ -5,6 +5,20 @@ const mongoHelper = require('../../../../lib/database')
 const userModel = require('../../domain/entity/model/user-model')
 
 describe('DeleteUserRoute', function () {
+  const fakeUsers = [{
+    name: 'user01',
+    email: 'user01@email.com',
+    password: 'user01_password'
+  }, {
+    name: 'user02',
+    email: 'user02@email.com',
+    password: 'user02_password'
+  }, {
+    name: 'user03',
+    email: 'user03@email.com',
+    password: 'user03_password'
+  }]
+
   beforeAll(async function () {
     await mongoHelper.connect(process.env.MONGO_URL)
   })
@@ -21,5 +35,14 @@ describe('DeleteUserRoute', function () {
     await request(app)
       .delete('/users/600dd38257176648a8f91386')
       .expect(404)
+  })
+
+  it('should return 204 if user is successfully deleted', async function () {
+    const users = await userModel.insertMany(fakeUsers)
+    const id = users[1]._id
+
+    await request(app)
+      .delete(`/users/${id}`)
+      .expect(204)
   })
 })
