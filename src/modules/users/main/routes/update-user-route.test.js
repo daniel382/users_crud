@@ -22,4 +22,24 @@ describe('UpdateUserRoute', function () {
       .put('/users/600dd38257176648a8f91386')
       .expect(404)
   })
+
+  it('should return 200 if user is successfully updated', async function () {
+    const fakeUser = {
+      name: 'any_name',
+      email: 'any@email.com',
+      password: 'any_password'
+    }
+
+    const savedUser = await userModel.create(fakeUser)
+    const id = savedUser._id
+
+    await request(app)
+      .put(`/users/${id}`)
+      .send({
+        name: 'updated_name',
+        email: 'updated@email.com',
+        password: 'updated_password'
+      })
+      .expect(200)
+  })
 })
