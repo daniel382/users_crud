@@ -39,6 +39,9 @@ class LoginRouter {
     if (!isEqual) {
       return HttpResponse.badRequest(new Error('password is wrong'))
     }
+
+    const accessToken = await this.generateAccessTokenRepository.sign(user._id)
+    return HttpResponse.ok({ token: accessToken })
   }
 }
 
@@ -153,5 +156,14 @@ describe('LoginRouter', function () {
     const httpResponse = await sut.route('any@email.com', 'wrong_password')
 
     expect(httpResponse.statusCode).toBe(400)
+  })
+
+  it('should return a new access token', async function () {
+    const { sut } = makeSut()
+
+    const httpResponse = await sut.route('any@email.com', 'any_password')
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({ token: 'any_token' })
   })
 })
