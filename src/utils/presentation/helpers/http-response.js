@@ -15,6 +15,15 @@ class HttpResponse {
     }
   }
 
+  static unauthorizedError (error) {
+    return {
+      statusCode: 401,
+      body: {
+        error: error.message
+      }
+    }
+  }
+
   static notFound (error) {
     return {
       statusCode: 404,
