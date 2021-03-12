@@ -1,5 +1,7 @@
 const request = require('supertest')
 
+const bcrypt = jest.requireActual('bcryptjs')
+
 const app = require('../../../../lib/app')
 const mongoHelper = require('../../../../lib/database')
 const userModel = require('../../domain/entity/model/user-model')
@@ -25,5 +27,26 @@ describe('LoginRoute', function () {
         password: 'any_password'
       })
       .expect(404)
+  })
+
+  it('should return 200 if user is successfully logged in', async function () {
+    const password = await bcrypt.hash('any_password', 10)
+
+    const user = await userModel.create({
+      name: 'user name',
+      email: 'user@email.com',
+      password,
+      token: 'any_previous_token'
+    })
+
+    const response = await request(app)
+      .post('/signin')
+      .send({
+        email: user.email,
+        password: 'any_password'
+      })
+
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('token')
   })
 })
