@@ -5,7 +5,8 @@ class MongoHelper {
     const conn = await mongoose.connect(url, {
       useNewUrlParser: true,
       useCreateIndex: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+      useFindAndModify: false
     })
 
     this.connection = conn.connection
