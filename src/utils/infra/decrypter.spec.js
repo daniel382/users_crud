@@ -18,6 +18,8 @@ class Decrypter {
     if (!this.crypter) {
       throw new MissingParamError('crypter')
     }
+
+    await this.crypter.compare(password, hash)
   }
 }
 
@@ -46,5 +48,13 @@ describe('Decrypter', function () {
     const promise = sut.compare('any_password', 'any_hash')
 
     expect(promise).rejects.toThrow(new MissingParamError('crypter'))
+  })
+
+  it('should call crypter with correct values', async function () {
+    const { sut } = makeSut()
+    await sut.compare('any_password', 'any_hash')
+
+    expect(sut.crypter.data).toBe('any_password')
+    expect(sut.crypter.hashValue).toBe('any_hash')
   })
 })
