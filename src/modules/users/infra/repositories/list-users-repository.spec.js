@@ -1,5 +1,6 @@
 const userModel = require('../../domain/entity/model/user-model')
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
+const InvalidParamError = require('../../../../utils/presentation/errors/invalid-param-error')
 
 class ListUsersRepository {
   constructor (userModel) {
@@ -17,6 +18,10 @@ class ListUsersRepository {
 
     if (!limit) {
       throw new MissingParamError('limit')
+    }
+
+    if (page < 0) {
+      throw new InvalidParamError('page')
     }
   }
 }
@@ -46,5 +51,12 @@ describe('ListUsersRepository', function () {
     const promise = sut.list(0)
 
     expect(promise).rejects.toThrow(new MissingParamError('limit'))
+  })
+
+  it('should throw if an invalid page is provided', function () {
+    const { sut } = makeSut()
+    const promise = sut.list(-1, 10)
+
+    expect(promise).rejects.toThrow(new InvalidParamError('page'))
   })
 })
