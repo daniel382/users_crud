@@ -23,10 +23,12 @@ class UpdateUserRouter {
       return HttpResponse.serverError()
     }
 
-    const { id } = httpRequest.params
+    const { params: { id }, body } = httpRequest
     if (!await this.loadUserByIdRepository.load(id)) {
       return { statusCode: 404 }
     }
+
+    await this.updateUserByIdRepository.update(id, body)
   }
 }
 
@@ -55,9 +57,11 @@ function makeLoadUserByIdRepositorySpy () {
 
 function makeUpdateUserByIdRepositorySpy () {
   class UpdateUserByIdRepositorySpy {
-    async update (id) {
+    async update (id, user) {
       this.id = id
-      return this.user
+      this.user = user
+
+      return this.newUser
     }
   }
 
@@ -118,5 +122,24 @@ describe('UpdateUserRouter', function () {
     const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(404)
+  })
+
+  it('should call UpdateUserByIdRepository with correct values', async function () {
+    const { sut } = makeSut()
+    const fakeUser = {
+      name: 'new_user_name',
+      email: 'new_user_email',
+      password: 'new_user_password'
+    }
+
+    const httpRequest = {
+      params: { id: 'any_id' },
+      body: fakeUser
+    }
+
+    await sut.route(httpRequest)
+
+    expect(sut.updateUserByIdRepository.id).toBe('any_id')
+    expect(sut.updateUserByIdRepository.user).toEqual(fakeUser)
   })
 })
