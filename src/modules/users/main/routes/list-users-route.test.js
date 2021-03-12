@@ -8,15 +8,18 @@ describe('ListUsersRoute', function () {
   const fakeUsers = [{
     name: 'user01',
     email: 'user01@email.com',
-    password: 'user01_password'
+    password: 'user01_password',
+    token: 'user01_token'
   }, {
     name: 'user02',
     email: 'user02@email.com',
-    password: 'user02_password'
+    password: 'user02_password',
+    token: 'user02_token'
   }, {
     name: 'user03',
     email: 'user03@email.com',
-    password: 'user03_password'
+    password: 'user03_password',
+    token: 'user03_token'
   }]
 
   beforeAll(async function () {

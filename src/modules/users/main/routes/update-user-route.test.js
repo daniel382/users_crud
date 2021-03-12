@@ -27,7 +27,8 @@ describe('UpdateUserRoute', function () {
     const fakeUser = {
       name: 'any_name',
       email: 'any@email.com',
-      password: 'any_password'
+      password: 'any_password',
+      token: 'any_token'
     }
 
     const savedUser = await userModel.create(fakeUser)

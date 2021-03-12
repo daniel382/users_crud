@@ -17,7 +17,9 @@ const userSchema = new Schema({
     select: false
   },
   token: {
-    type: String
+    type: String,
+    required: true,
+    select: false
   }
 })
 

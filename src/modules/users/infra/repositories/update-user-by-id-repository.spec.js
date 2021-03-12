@@ -48,7 +48,8 @@ describe('UpdateUserByIdRepository', function () {
     const user = await userModel.create({
       name: 'any_name',
       email: 'any@email.com',
-      password: 'any_password'
+      password: 'any_password',
+      token: 'any_token'
     })
 
     const userToUpdate = {

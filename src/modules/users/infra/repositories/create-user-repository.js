@@ -23,7 +23,8 @@ class CreateUserRepository {
     return await this.userModel.create({
       name,
       email,
-      password
+      password,
+      token: 'temp'
     })
   }
 }

@@ -40,7 +40,8 @@ describe('DeleteUserRepository', function () {
     const user = await userModel.create({
       name: 'name',
       email: 'email',
-      password: 'password'
+      password: 'password',
+      token: 'any_token'
     })
 
     const result = await sut.delete(user._id)

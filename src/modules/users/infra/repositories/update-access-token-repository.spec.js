@@ -49,7 +49,7 @@ describe('UpdateAccessTokenRepository', function () {
     })
 
     await sut.update(user._id, 'new_access_token')
-    const updatedUser = await userModel.findById(user._id)
+    const updatedUser = await userModel.findById(user._id).select('+token')
 
     expect(updatedUser._doc).toEqual({
       _id: user._id,
