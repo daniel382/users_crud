@@ -14,6 +14,10 @@ class UpdateUserByIdRepository {
     if (!id) {
       throw new MissingParamError('id')
     }
+
+    if (!user) {
+      throw new MissingParamError('user')
+    }
   }
 }
 
@@ -35,5 +39,12 @@ describe('UpdateUserByIdRepository', function () {
     const promise = sut.update()
 
     expect(promise).rejects.toThrow(new MissingParamError('id'))
+  })
+
+  it('should throw if no user is provided', function () {
+    const { sut } = makeSut()
+    const promise = sut.update('any_id')
+
+    expect(promise).rejects.toThrow(new MissingParamError('user'))
   })
 })
