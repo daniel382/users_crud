@@ -2,6 +2,10 @@ const bcrypt = require('../../../__mocks__/bcryptjs')
 const MissingParamError = require('../presentation/errors/missing-param-error')
 
 class Decrypter {
+  constructor (crypter) {
+    this.crypter = crypter
+  }
+
   async compare (password, hash) {
     if (!password) {
       throw new MissingParamError('password')
@@ -9,6 +13,10 @@ class Decrypter {
 
     if (!hash) {
       throw new MissingParamError('hash')
+    }
+
+    if (!this.crypter) {
+      throw new MissingParamError('crypter')
     }
   }
 }
@@ -31,5 +39,12 @@ describe('Decrypter', function () {
     const promise = sut.compare('any_password')
 
     expect(promise).rejects.toThrow(new MissingParamError('hash'))
+  })
+
+  it('should throw if no crypter is provided', function () {
+    const sut = new Decrypter()
+    const promise = sut.compare('any_password', 'any_hash')
+
+    expect(promise).rejects.toThrow(new MissingParamError('crypter'))
   })
 })
