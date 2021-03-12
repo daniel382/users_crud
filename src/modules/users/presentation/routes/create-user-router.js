@@ -55,7 +55,17 @@ class CreateUserRouter {
 
       const token = await this.generateAccessTokenRepository.sign({ id: newUser._id })
 
-      return HttpResponse.ok({ ...newUser, token })
+      const response = {
+        user: {
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          __v: newUser.__v
+        },
+        token
+      }
+
+      return HttpResponse.ok(response)
       //
     } catch (err) {
       return HttpResponse.serverError()

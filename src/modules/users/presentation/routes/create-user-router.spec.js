@@ -341,10 +341,11 @@ describe('Create User', function () {
     }
 
     const newUser = {
-      _id: 'any_id',
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_hashed_password',
+      user: {
+        _id: 'any_id',
+        name: 'any_name',
+        email: 'any_email'
+      },
       token: 'any_token'
     }
 
