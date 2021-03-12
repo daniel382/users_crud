@@ -14,7 +14,7 @@ class LoadUserByEmailRepository {
       throw new MissingParamError('UserModel')
     }
 
-    const result = await this.userModel.find({ email })
+    const result = await this.userModel.find({ email }).select('+password')
     const user = result[0]
 
     return user || null
