@@ -11,8 +11,12 @@ class ListUsersRepository {
       throw new MissingParamError('UserModel')
     }
 
-    if (!page) {
+    if (!page && page !== 0) {
       throw new MissingParamError('page')
+    }
+
+    if (!limit) {
+      throw new MissingParamError('limit')
     }
   }
 }
@@ -35,5 +39,12 @@ describe('ListUsersRepository', function () {
     const promise = sut.list()
 
     expect(promise).rejects.toThrow(new MissingParamError('page'))
+  })
+
+  it('should throw if no limit is provided', function () {
+    const { sut } = makeSut()
+    const promise = sut.list(0)
+
+    expect(promise).rejects.toThrow(new MissingParamError('limit'))
   })
 })
