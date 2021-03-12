@@ -51,6 +51,8 @@ class LoginRouter {
     }
 
     const accessToken = await this.generateAccessTokenRepository.sign(user._id)
+    await this.updateAccessTokenRepository.update(accessToken)
+
     return HttpResponse.ok({ token: accessToken })
   }
 }

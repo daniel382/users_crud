@@ -62,8 +62,8 @@ function makeGenerateAccessTokenSpy () {
 
 function makeUpdateAccessTokenSpy () {
   class UpdateAccessTokenRepositorySpy {
-    async update () {
-
+    async update (accessToken) {
+      this.accessToken = accessToken
     }
   }
 
@@ -128,6 +128,14 @@ describe('LoginRouter', function () {
     const httpResponse = await sut.route('any@email.com', 'any_password')
 
     expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should call UpdateAccessToken with correct values', async function () {
+    const { sut } = makeSut()
+
+    await sut.route('any@email.com', 'any_password')
+
+    expect(sut.updateAccessTokenRepository.accessToken).toBe('any_token')
   })
 
   it('should return 404 if no user is found', async function () {
