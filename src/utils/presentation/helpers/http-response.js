@@ -15,6 +15,15 @@ class HttpResponse {
     }
   }
 
+  static notFound (error) {
+    return {
+      statusCode: 404,
+      body: {
+        error: error.message
+      }
+    }
+  }
+
   static serverError () {
     return {
       statusCode: 500,
