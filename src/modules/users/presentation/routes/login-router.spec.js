@@ -34,6 +34,11 @@ class LoginRouter {
     if (!user) {
       return HttpResponse.notFound(new NotFound('user'))
     }
+
+    const isEqual = await this.encrypter.compare(password, user.password)
+    if (!isEqual) {
+      return HttpResponse.badRequest(new Error('password is wrong'))
+    }
   }
 }
 
@@ -66,12 +71,13 @@ function makeLoadUserByEmailRepositorySpy () {
 
 function makeEncrypterSpy () {
   class EncrypterSpy {
-    async compare (email) {
-
+    async compare (email, hash) {
+      return this.isEqual
     }
   }
 
   const encrypterSpy = new EncrypterSpy()
+  encrypterSpy.isEqual = true
 
   return encrypterSpy
 }
@@ -138,5 +144,14 @@ describe('LoginRouter', function () {
     const httpResponse = await sut.route('any@email.com', 'any_password')
 
     expect(httpResponse.statusCode).toBe(404)
+  })
+
+  it('should return 400 if user password is wrong', async function () {
+    const { sut } = makeSut()
+
+    sut.encrypter.isEqual = false
+    const httpResponse = await sut.route('any@email.com', 'wrong_password')
+
+    expect(httpResponse.statusCode).toBe(400)
   })
 })
