@@ -7,13 +7,15 @@ class CreateUserRouter {
     hashPassword,
     createUserRepository,
     loadUserByEmailRepository,
-    generateAccessTokenRepository
+    generateAccessTokenRepository,
+    updateAccessTokenRepository
   ) {
     this.comparePasswordUseCase = comparePasswordUseCase
     this.hashPassword = hashPassword
     this.createUserRepository = createUserRepository
     this.loadUserByEmailRepository = loadUserByEmailRepository
     this.generateAccessTokenRepository = generateAccessTokenRepository
+    this.updateAccessTokenRepository = updateAccessTokenRepository
   }
 
   async route (httpRequest) {
@@ -54,6 +56,7 @@ class CreateUserRouter {
       const newUser = await this.createUserRepository.save(user)
 
       const token = await this.generateAccessTokenRepository.sign({ id: newUser._id })
+      await this.updateAccessTokenRepository.update(newUser._id, token)
 
       const response = {
         user: {

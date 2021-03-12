@@ -9,6 +9,7 @@ const HashPassword = require('../../../../utils/infra/encrypter')
 const CreateUserRepository = require('../../infra/repositories/create-user-repository')
 const LoadUserByEmailRepository = require('../../infra/repositories/load-user-by-email-repository')
 const GenerateAccessTokenRepository = require('../../infra/repositories/generate-access-token-repository')
+const UpdateAccessTokenRepository = require('../../infra/repositories/update-access-token-repository')
 
 class CreateUserRouterComposer {
   static compose () {
@@ -17,13 +18,15 @@ class CreateUserRouterComposer {
     const createUserRepository = new CreateUserRepository(userModel)
     const loadUserByEmailRepository = new LoadUserByEmailRepository(userModel)
     const generateAccessTokenRepository = new GenerateAccessTokenRepository(jwt)
+    const updateAccessTokenRepository = new UpdateAccessTokenRepository(userModel)
 
     return new CreateUserRouter(
       comparePasswordUseCase,
       hashPassword,
       createUserRepository,
       loadUserByEmailRepository,
-      generateAccessTokenRepository
+      generateAccessTokenRepository,
+      updateAccessTokenRepository
     )
   }
 }

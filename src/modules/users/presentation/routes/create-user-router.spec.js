@@ -6,13 +6,15 @@ function makeSut () {
   const createUserRepoSpy = makeCreateUserRepository()
   const loadUserByEmailRepoSpy = makeLoadUserByEmailRepositorySpy()
   const generateAccessTokenSpy = makeGenerateAccessTokenSpy()
+  const updateAccessTokenSpy = makeUpdateAccessTokenSpy()
 
   const sut = new CreateUserRouter(
     comparePasswordUseCaseSpy,
     hashPasswordSpy,
     createUserRepoSpy,
     loadUserByEmailRepoSpy,
-    generateAccessTokenSpy
+    generateAccessTokenSpy,
+    updateAccessTokenSpy
   )
 
   return {
@@ -103,6 +105,18 @@ function makeGenerateAccessTokenSpy () {
   const generateAccessTokenSpy = new GenerateAccessTokenSpy()
   generateAccessTokenSpy.token = 'any_token'
   return generateAccessTokenSpy
+}
+
+function makeUpdateAccessTokenSpy () {
+  class UpdateAccessTokenSpy {
+    async update (id, accessToken) {
+
+    }
+  }
+
+  const updateAccessTokenSpy = new UpdateAccessTokenSpy()
+  updateAccessTokenSpy.token = 'any_token'
+  return updateAccessTokenSpy
 }
 
 function makeCreateUserRepositoryWithThrow () {
