@@ -66,4 +66,11 @@ describe('Decrypter', function () {
 
     expect(isOk).toBe(false)
   })
+
+  it('should return true if values are equivalents', async function () {
+    const { sut } = makeSut()
+    const isOk = await sut.compare('any_wrong_password', 'any_wrong_hash')
+
+    expect(isOk).toBe(true)
+  })
 })
