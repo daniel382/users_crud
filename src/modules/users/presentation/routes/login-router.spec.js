@@ -30,7 +30,10 @@ class LoginRouter {
       return HttpResponse.serverError()
     }
 
-    return HttpResponse.notFound(new NotFound('user'))
+    const user = await this.loadUserByEmailRepository.load(email)
+    if (!user) {
+      return HttpResponse.notFound(new NotFound('user'))
+    }
   }
 }
 
@@ -46,11 +49,17 @@ function makeSut () {
 function makeLoadUserByEmailRepositorySpy () {
   class LoadUserByEmailRepoSpy {
     async load (email) {
-
+      return this.user
     }
   }
 
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepoSpy()
+  loadUserByEmailRepositorySpy.user = {
+    _id: 'any_id',
+    name: 'any_name',
+    email: 'any_email',
+    password: 'any_password'
+  }
 
   return loadUserByEmailRepositorySpy
 }
@@ -125,6 +134,7 @@ describe('LoginRouter', function () {
   it('should return 404 if no user is found', async function () {
     const { sut } = makeSut()
 
+    sut.loadUserByEmailRepository.user = null
     const httpResponse = await sut.route('any@email.com', 'any_password')
 
     expect(httpResponse.statusCode).toBe(404)
