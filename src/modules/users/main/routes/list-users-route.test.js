@@ -38,4 +38,11 @@ describe('ListUsersRoute', function () {
 
     expect(httpResponse.body.length).toBe(3)
   })
+
+  it('should return an empty list if no user is found', async function () {
+    const httpResponse = await request(app)
+      .get('/users')
+
+    expect(httpResponse.body.length).toBe(0)
+  })
 })
