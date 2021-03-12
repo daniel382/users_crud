@@ -16,12 +16,16 @@ class ListUsersRepository {
       throw new MissingParamError('page')
     }
 
-    if (!limit) {
+    if (!limit && limit !== 0) {
       throw new MissingParamError('limit')
     }
 
     if (page < 0) {
       throw new InvalidParamError('page')
+    }
+
+    if (limit <= 0) {
+      throw new InvalidParamError('limit')
     }
   }
 }
@@ -58,5 +62,12 @@ describe('ListUsersRepository', function () {
     const promise = sut.list(-1, 10)
 
     expect(promise).rejects.toThrow(new InvalidParamError('page'))
+  })
+
+  it('should throw if an invalid limit is provided', function () {
+    const { sut } = makeSut()
+    const promise = sut.list(0, 0)
+
+    expect(promise).rejects.toThrow(new InvalidParamError('limit'))
   })
 })
