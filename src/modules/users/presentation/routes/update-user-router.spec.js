@@ -24,7 +24,9 @@ class UpdateUserRouter {
     }
 
     const { id } = httpRequest.params
-    await this.loadUserByIdRepository.load(id)
+    if (!await this.loadUserByIdRepository.load(id)) {
+      return { statusCode: 404 }
+    }
   }
 }
 
@@ -104,5 +106,17 @@ describe('UpdateUserRouter', function () {
     await sut.route(httpRequest)
 
     expect(sut.loadUserByIdRepository.id).toBe('any_id')
+  })
+
+  it('should return 404 if no user is found', async function () {
+    const { sut } = makeSut()
+    const httpRequest = {
+      params: { id: 'any_id' }
+    }
+
+    sut.loadUserByIdRepository.user = null
+    const httpResponse = await sut.route(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(404)
   })
 })
