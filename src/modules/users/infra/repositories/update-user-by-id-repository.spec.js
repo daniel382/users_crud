@@ -1,28 +1,7 @@
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 const userModel = require('../../domain/entity/model/user-model')
 const mongoHelper = require('../../../../lib/database')
-
-class UpdateUserByIdRepository {
-  constructor (userModel) {
-    this.userModel = userModel
-  }
-
-  async update (id, user) {
-    if (!this.userModel) {
-      throw new MissingParamError('UserModel')
-    }
-
-    if (!id) {
-      throw new MissingParamError('id')
-    }
-
-    if (!user) {
-      throw new MissingParamError('user')
-    }
-
-    return await this.userModel.findByIdAndUpdate(id, user, { new: true })
-  }
-}
+const UpdateUserByIdRepository = require('./update-user-by-id-repository')
 
 function makeSut () {
   const sut = new UpdateUserByIdRepository(userModel)
