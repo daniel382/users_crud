@@ -4,9 +4,16 @@ function makeSut () {
   const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
   const encrypter = makeEncrypterSpy()
   const generateAccessTokenSpy = makeGenerateAccessTokenSpy()
+  const updateAccessTokenRepositorySpy = makeUpdateAccessTokenSpy()
 
-  const sut = new LoginRouter(loadUserByEmailRepositorySpy, encrypter, generateAccessTokenSpy)
-  return { sut, loadUserByEmailRepositorySpy, generateAccessTokenSpy }
+  const sut = new LoginRouter(
+    loadUserByEmailRepositorySpy,
+    encrypter,
+    generateAccessTokenSpy,
+    updateAccessTokenRepositorySpy
+  )
+
+  return { sut }
 }
 
 function makeLoadUserByEmailRepositorySpy () {
@@ -53,6 +60,18 @@ function makeGenerateAccessTokenSpy () {
   return generateAccessTokenSpy
 }
 
+function makeUpdateAccessTokenSpy () {
+  class UpdateAccessTokenRepositorySpy {
+    async update () {
+
+    }
+  }
+
+  const updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy()
+
+  return updateAccessTokenRepositorySpy
+}
+
 describe('LoginRouter', function () {
   it('should return 400 if no email is provided', async function () {
     const { sut } = makeSut()
@@ -89,6 +108,22 @@ describe('LoginRouter', function () {
     const encrypter = makeEncrypterSpy()
 
     const sut = new LoginRouter(loadUserByEmailRepositorySpy, encrypter)
+
+    const httpResponse = await sut.route('any@email.com', 'any_password')
+
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should return 500 if no UpdateAccessToken is provided', async function () {
+    const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
+    const encrypter = makeEncrypterSpy()
+    const generateAccessTokenSpy = makeGenerateAccessTokenSpy()
+
+    const sut = new LoginRouter(
+      loadUserByEmailRepositorySpy,
+      encrypter,
+      generateAccessTokenSpy
+    )
 
     const httpResponse = await sut.route('any@email.com', 'any_password')
 

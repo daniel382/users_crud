@@ -3,10 +3,16 @@ const MissingParamError = require('../../../../utils/presentation/errors/missing
 const NotFound = require('../../../../utils/presentation/errors/not-found-error')
 
 class LoginRouter {
-  constructor (loadUserByEmailRepository, encrypter, generateAccessTokenRepository) {
+  constructor (
+    loadUserByEmailRepository,
+    encrypter,
+    generateAccessTokenRepository,
+    updateAccessTokenRepository
+  ) {
     this.loadUserByEmailRepository = loadUserByEmailRepository
     this.encrypter = encrypter
     this.generateAccessTokenRepository = generateAccessTokenRepository
+    this.updateAccessTokenRepository = updateAccessTokenRepository
   }
 
   async route (email, password) {
@@ -27,6 +33,10 @@ class LoginRouter {
     }
 
     if (!this.generateAccessTokenRepository) {
+      return HttpResponse.serverError()
+    }
+
+    if (!this.updateAccessTokenRepository) {
       return HttpResponse.serverError()
     }
 
