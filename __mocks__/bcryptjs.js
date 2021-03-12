@@ -9,6 +9,7 @@ class Bcryptjs {
   async compare (data, hash) {
     this.data = data
     this.hashValue = hash
+    return this.isOk
   }
 }
 

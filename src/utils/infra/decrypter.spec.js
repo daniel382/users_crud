@@ -19,11 +19,12 @@ class Decrypter {
       throw new MissingParamError('crypter')
     }
 
-    await this.crypter.compare(password, hash)
+    return await this.crypter.compare(password, hash)
   }
 }
 
 function makeSut () {
+  bcrypt.isOk = true
   const sut = new Decrypter(bcrypt)
   return { sut }
 }
@@ -56,5 +57,13 @@ describe('Decrypter', function () {
 
     expect(sut.crypter.data).toBe('any_password')
     expect(sut.crypter.hashValue).toBe('any_hash')
+  })
+
+  it('should return false if values are not equivalents', async function () {
+    const { sut } = makeSut()
+    sut.crypter.isOk = false
+    const isOk = await sut.compare('any_wrong_password', 'any_wrong_hash')
+
+    expect(isOk).toBe(false)
   })
 })
