@@ -27,6 +27,8 @@ class ListUsersRepository {
     if (limit <= 0) {
       throw new InvalidParamError('limit')
     }
+
+    return []
   }
 }
 
@@ -69,5 +71,12 @@ describe('ListUsersRepository', function () {
     const promise = sut.list(0, 0)
 
     expect(promise).rejects.toThrow(new InvalidParamError('limit'))
+  })
+
+  it('should return an empty list if no user is found', async function () {
+    const { sut } = makeSut()
+    const users = await sut.list(0, 10)
+
+    expect(users).toEqual([])
   })
 })
