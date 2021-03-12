@@ -1,4 +1,8 @@
 class Bcryptjs {
+  constructor () {
+    this.isOk = true
+  }
+
   async hash (data, rounds) {
     this.data = data
     this.rounds = rounds
