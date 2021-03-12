@@ -75,21 +75,36 @@ function makeUpdateAccessTokenSpy () {
 describe('LoginRouter', function () {
   it('should return 400 if no email is provided', async function () {
     const { sut } = makeSut()
-    const httpResponse = await sut.route()
+    const httpRequest = { body: { } }
+
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
   })
 
   it('should return 400 if no password is provided', async function () {
     const { sut } = makeSut()
-    const httpResponse = await sut.route('any@email.com')
+    const httpRequest = {
+      body: {
+        email: 'any@email.com'
+      }
+    }
+
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
   })
 
   it('should return 500 if no LoadUserByEmailRepository is provided', async function () {
     const sut = new LoginRouter()
-    const httpResponse = await sut.route('any@email.com', 'any_password')
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
   })
@@ -97,8 +112,14 @@ describe('LoginRouter', function () {
   it('should return 500 if no Encrypter is provided', async function () {
     const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
     const sut = new LoginRouter(loadUserByEmailRepositorySpy)
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
 
-    const httpResponse = await sut.route('any@email.com', 'any_password')
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
   })
@@ -106,10 +127,16 @@ describe('LoginRouter', function () {
   it('should return 500 if no GenerateAccessTokenRepository is provided', async function () {
     const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
     const encrypter = makeEncrypterSpy()
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
 
     const sut = new LoginRouter(loadUserByEmailRepositorySpy, encrypter)
 
-    const httpResponse = await sut.route('any@email.com', 'any_password')
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
   })
@@ -118,6 +145,12 @@ describe('LoginRouter', function () {
     const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
     const encrypter = makeEncrypterSpy()
     const generateAccessTokenSpy = makeGenerateAccessTokenSpy()
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
 
     const sut = new LoginRouter(
       loadUserByEmailRepositorySpy,
@@ -125,41 +158,65 @@ describe('LoginRouter', function () {
       generateAccessTokenSpy
     )
 
-    const httpResponse = await sut.route('any@email.com', 'any_password')
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(500)
   })
 
   it('should call UpdateAccessToken with correct values', async function () {
     const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
 
-    await sut.route('any@email.com', 'any_password')
+    await sut.route(httpRequest)
 
     expect(sut.updateAccessTokenRepository.accessToken).toBe('any_token')
   })
 
   it('should return 404 if no user is found', async function () {
     const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
 
     sut.loadUserByEmailRepository.user = null
-    const httpResponse = await sut.route('any@email.com', 'any_password')
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(404)
   })
 
   it('should return 400 if user password is wrong', async function () {
     const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
 
     sut.encrypter.isEqual = false
-    const httpResponse = await sut.route('any@email.com', 'wrong_password')
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(400)
   })
 
   it('should return a new access token', async function () {
     const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any@email.com',
+        password: 'any_password'
+      }
+    }
 
-    const httpResponse = await sut.route('any@email.com', 'any_password')
+    const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({ token: 'any_token' })
