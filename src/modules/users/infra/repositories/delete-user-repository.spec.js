@@ -1,24 +1,7 @@
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 const userModel = require('../../domain/entity/model/user-model')
 const mongoHelper = require('../../../../lib/database')
-
-class DeleteUserRepository {
-  constructor (userModel) {
-    this.userModel = userModel
-  }
-
-  async delete (id) {
-    if (!id) {
-      throw new MissingParamError('id')
-    }
-
-    if (!this.userModel) {
-      throw new MissingParamError('UserModel')
-    }
-
-    return Boolean(await this.userModel.findByIdAndDelete(id))
-  }
-}
+const DeleteUserRepository = require('./delete-user-repository')
 
 function makeSut () {
   const sut = new DeleteUserRepository(userModel)
