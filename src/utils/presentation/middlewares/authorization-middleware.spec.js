@@ -1,7 +1,7 @@
 const userModel = require('../../../modules/users/domain/entity/model/user-model')
 const HttpResponse = require('../helpers/http-response')
 
-class AutorizationMiddleware {
+class AuthorizationMiddleware {
   constructor (userModel) {
     this.userModel = userModel
   }
@@ -19,14 +19,14 @@ class AutorizationMiddleware {
 
 describe('AuthorizationMiddleware', function () {
   it('should return 500 if no userModel is provided', async function () {
-    const sut = new AutorizationMiddleware()
+    const sut = new AuthorizationMiddleware()
     const httpResponse = await sut.verify()
 
     expect(httpResponse.statusCode).toBe(500)
   })
 
   it('should return 401 if no auth header is provided', async function () {
-    const sut = new AutorizationMiddleware(userModel)
+    const sut = new AuthorizationMiddleware(userModel)
     const httpRequest = {
       headers: {}
     }
