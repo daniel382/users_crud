@@ -3,7 +3,8 @@ class ExpressAdapter {
     return async function (req, res) {
       const httpRequest = {
         body: req.body,
-        params: req.params
+        params: req.params,
+        query: req.query
       }
 
       const { statusCode, body } = await router.route(httpRequest)
