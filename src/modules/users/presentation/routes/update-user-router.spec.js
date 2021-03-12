@@ -18,6 +18,10 @@ class UpdateUserRouter {
     if (!this.updateUserByIdRepository) {
       return HttpResponse.serverError()
     }
+
+    if (!this.updateUserByIdRepository.update) {
+      return HttpResponse.serverError()
+    }
   }
 }
 
@@ -54,6 +58,14 @@ describe('UpdateUserRouter', function () {
   it('should return 500 if no UpdateUserByIdRepository is provided', async function () {
     const loadUserByIdRepositorySpy = makeLoadUserByIdRepositorySpy()
     const sut = new UpdateUserRouter(loadUserByIdRepositorySpy)
+    const httpResponse = await sut.route()
+
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should return 500 if an invalid UpdateUserByIdRepository is provided', async function () {
+    const loadUserByIdRepositorySpy = makeLoadUserByIdRepositorySpy()
+    const sut = new UpdateUserRouter(loadUserByIdRepositorySpy, {})
     const httpResponse = await sut.route()
 
     expect(httpResponse.statusCode).toBe(500)
