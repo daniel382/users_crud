@@ -18,6 +18,10 @@ class DeleteUserRouter {
     if (!this.loadUserByIdRepository) {
       return HttpResponse.serverError()
     }
+
+    if (!this.loadUserByIdRepository.load) {
+      return HttpResponse.serverError()
+    }
   }
 }
 
@@ -50,6 +54,14 @@ describe('DeleteUserRouter', function () {
   it('should return 500 if no LoadUserByIdRepository is provided', async function () {
     const deleteUserRepositorySpy = makeDeleteUserRepositorySpy()
     const sut = new DeleteUserRouter(deleteUserRepositorySpy)
+    const httpResponse = await sut.route()
+
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should return 500 if an invalid LoadUserByIdRepository is provided', async function () {
+    const deleteUserRepositorySpy = makeDeleteUserRepositorySpy()
+    const sut = new DeleteUserRouter(deleteUserRepositorySpy, {})
     const httpResponse = await sut.route()
 
     expect(httpResponse.statusCode).toBe(500)
