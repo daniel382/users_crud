@@ -1,4 +1,6 @@
 const userModel = require('../../domain/entity/model/user-model')
+const mongoHelper = require('../../../../lib/database')
+
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 const InvalidParamError = require('../../../../utils/presentation/errors/invalid-param-error')
 
@@ -28,7 +30,10 @@ class ListUsersRepository {
       throw new InvalidParamError('limit')
     }
 
-    return []
+    return await this.userModel
+      .find()
+      .skip(page * limit)
+      .limit(limit)
   }
 }
 
@@ -38,6 +43,32 @@ function makeSut () {
 }
 
 describe('ListUsersRepository', function () {
+  const fakeUsers = [{
+    name: 'user01',
+    email: 'user01@email.com',
+    password: 'user01_password'
+  }, {
+    name: 'user02',
+    email: 'user02@email.com',
+    password: 'user02_password'
+  }, {
+    name: 'user03',
+    email: 'user03@email.com',
+    password: 'user03_password'
+  }]
+
+  beforeAll(async function () {
+    await mongoHelper.connect(process.env.MONGO_URL)
+  })
+
+  afterAll(async function () {
+    await mongoHelper.disconnect()
+  })
+
+  beforeEach(async function () {
+    await userModel.deleteMany()
+  })
+
   it('should throw if no userModel is provided', function () {
     const sut = new ListUsersRepository()
     const promise = sut.list()
@@ -78,5 +109,13 @@ describe('ListUsersRepository', function () {
     const users = await sut.list(0, 10)
 
     expect(users).toEqual([])
+  })
+
+  it('should return a list of users', async function () {
+    const { sut } = makeSut()
+    const savedUsers = await userModel.insertMany(fakeUsers)
+    const loadedUsers = await sut.list(0, 10)
+
+    expect(loadedUsers.length).toBe(savedUsers.length)
   })
 })
