@@ -2,9 +2,10 @@ const HttpResponse = require('../../../../utils/presentation/helpers/http-respon
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')
 
 class LoginRouter {
-  constructor (loadUserByEmailRepository, encrypter) {
+  constructor (loadUserByEmailRepository, encrypter, generateAccessTokenRepository) {
     this.loadUserByEmailRepository = loadUserByEmailRepository
     this.encrypter = encrypter
+    this.generateAccessTokenRepository = generateAccessTokenRepository
   }
 
   async route (email, password) {
@@ -23,12 +24,19 @@ class LoginRouter {
     if (!this.encrypter) {
       return HttpResponse.serverError()
     }
+
+    if (!this.generateAccessTokenRepository) {
+      return HttpResponse.serverError()
+    }
   }
 }
 
 function makeSut () {
   const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
-  const sut = new LoginRouter(loadUserByEmailRepositorySpy)
+  const encrypter = makeEncrypterSpy(
+
+  )
+  const sut = new LoginRouter(loadUserByEmailRepositorySpy, encrypter)
   return { sut, loadUserByEmailRepositorySpy }
 }
 
@@ -42,6 +50,18 @@ function makeLoadUserByEmailRepositorySpy () {
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepoSpy()
 
   return loadUserByEmailRepositorySpy
+}
+
+function makeEncrypterSpy () {
+  class EncrypterSpy {
+    async compare (email) {
+
+    }
+  }
+
+  const encrypterSpy = new EncrypterSpy()
+
+  return encrypterSpy
 }
 
 describe('LoginRouter', function () {
@@ -69,6 +89,17 @@ describe('LoginRouter', function () {
   it('should return 500 if no Encrypter is provided', async function () {
     const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
     const sut = new LoginRouter(loadUserByEmailRepositorySpy)
+
+    const httpResponse = await sut.route('any@email.com', 'any_password')
+
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  it('should return 500 if no GenerateAccessTokenRepository is provided', async function () {
+    const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
+    const encrypter = makeEncrypterSpy()
+
+    const sut = new LoginRouter(loadUserByEmailRepositorySpy, encrypter)
 
     const httpResponse = await sut.route('any@email.com', 'any_password')
 
