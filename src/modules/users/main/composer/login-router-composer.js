@@ -13,8 +13,8 @@ class LoginRouterComposer {
   static compose () {
     const loadUserByEmailRepository = new LoadUserByEmailRepository(userModel)
     const decrypter = new Decrypter(bcrypt)
-    const generateAccessTokenRepository = GenerateAccessTokenRepository(jwt)
-    const updateAccessTokenRepository = UpdateAccessTokenRepository(userModel)
+    const generateAccessTokenRepository = new GenerateAccessTokenRepository(jwt)
+    const updateAccessTokenRepository = new UpdateAccessTokenRepository(userModel)
 
     return new LoginRouter(
       loadUserByEmailRepository,
