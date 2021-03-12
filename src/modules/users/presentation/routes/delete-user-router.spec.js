@@ -6,7 +6,7 @@ class DeleteUserRouter {
     this.loadUserByIdRepository = loadUserByIdRepository
   }
 
-  async route () {
+  async route (httpRequest) {
     if (!this.deleteUserRepository) {
       return HttpResponse.serverError()
     }
@@ -23,7 +23,13 @@ class DeleteUserRouter {
       return HttpResponse.serverError()
     }
 
-    return { statusCode: 404 }
+    const { id } = httpRequest.params
+    if (!await this.loadUserByIdRepository.load(id)) {
+      return { statusCode: 404 }
+    }
+
+    await this.deleteUserRepository.delete(id)
+    return { statusCode: 204 }
   }
 }
 
@@ -39,11 +45,12 @@ function makeSut () {
 function makeDeleteUserRepositorySpy () {
   class DeleteUserRepositorySpy {
     async delete (id) {
-
+      return this.isDeleted
     }
   }
 
   const deleteUserRepositorySpy = new DeleteUserRepositorySpy()
+  deleteUserRepositorySpy.isDeleted = true
   return deleteUserRepositorySpy
 }
 
@@ -59,7 +66,6 @@ function makeLoadUserByIdRepositorySpy () {
   loadUserByIdRepositorySpy.user = {
     _id: 'any_id'
   }
-
   return loadUserByIdRepositorySpy
 }
 
@@ -100,8 +106,19 @@ describe('DeleteUserRouter', function () {
       params: { id: 'any_user_id' }
     }
 
+    sut.loadUserByIdRepository.user = null
     const httpResponse = await sut.route(httpRequest)
 
     expect(httpResponse.statusCode).toBe(404)
+  })
+
+  it('should return 204 if user is successfully deleted', async function () {
+    const { sut } = makeSut()
+    const httpRequest = {
+      params: { id: 'any_user_id' }
+    }
+
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(204)
   })
 })
