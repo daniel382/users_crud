@@ -1,9 +1,10 @@
 const HttpResponse = require('../../../../utils/presentation/helpers/http-response')
 
 class UpdateUserRouter {
-  constructor (loadUserByIdRepository, updateUserByIdRepository) {
+  constructor (loadUserByIdRepository, updateUserByIdRepository, encrypter) {
     this.loadUserByIdRepository = loadUserByIdRepository
     this.updateUserByIdRepository = updateUserByIdRepository
+    this.encrypter = encrypter
   }
 
   async route (httpRequest) {
@@ -26,6 +27,10 @@ class UpdateUserRouter {
     const { params: { id }, body } = httpRequest
     if (!await this.loadUserByIdRepository.load(id)) {
       return { statusCode: 404 }
+    }
+
+    if (body.password) {
+      body.password = await this.encrypter.hash(body.password)
     }
 
     const user = await this.updateUserByIdRepository.update(id, body)

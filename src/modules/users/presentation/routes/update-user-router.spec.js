@@ -3,8 +3,14 @@ const UpdateUserRouter = require('./update-user-router')
 function makeSut () {
   const loadUserByIdRepositorySpy = makeLoadUserByIdRepositorySpy()
   const updateUserByIdRepositorySpy = makeUpdateUserByIdRepositorySpy()
+  const encrypter = makeHashPassword()
 
-  const sut = new UpdateUserRouter(loadUserByIdRepositorySpy, updateUserByIdRepositorySpy)
+  const sut = new UpdateUserRouter(
+    loadUserByIdRepositorySpy,
+    updateUserByIdRepositorySpy,
+    encrypter
+  )
+
   return { sut, loadUserByIdRepositorySpy, updateUserByIdRepositorySpy }
 }
 
@@ -43,6 +49,19 @@ function makeUpdateUserByIdRepositorySpy () {
   return updateUserByIdRepositorySpy
 }
 
+function makeHashPassword () {
+  class HashPasswordSpy {
+    async hash (password) {
+      this.password = password
+      return 'any_hashed_password'
+    }
+  }
+
+  const hashPasswordSpy = new HashPasswordSpy()
+
+  return hashPasswordSpy
+}
+
 describe('UpdateUserRouter', function () {
   it('should return 500 if no LoadUserByIdRepository is provided', async function () {
     const sut = new UpdateUserRouter()
@@ -77,7 +96,8 @@ describe('UpdateUserRouter', function () {
   it('should call LoadUserByIdRepository with correct values', async function () {
     const { sut } = makeSut()
     const httpRequest = {
-      params: { id: 'any_id' }
+      params: { id: 'any_id' },
+      body: {}
     }
 
     await sut.route(httpRequest)
