@@ -1,5 +1,6 @@
 const express = require('express')
 
+const authorizarionMiddleware = require('../utils/presentation/middlewares/authorization-middleware')
 const userRoutes = require('../modules/users/main/routes')
 
 class App {
@@ -27,6 +28,8 @@ class App {
 
       next()
     })
+
+    this.app.use(authorizarionMiddleware)
   }
 
   routes () {
