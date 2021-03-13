@@ -115,6 +115,19 @@ or
 npm run test:ci
 ```
 
+## Online demo
+
+To see this app running, start send a POST HTTP request [here](https://users-api-360.herokuapp.com/signup) with body:
+
+```
+{
+  "name": "you user name",
+  "email: "you_user@email.com",
+  "password": "you password",
+  "repeatPassword": "you password",
+}
+```
+
 ## Authors
 
 * **Daniel Lucas** - *current maintainer* - [daniel382](https://github.com/daniel382/)
