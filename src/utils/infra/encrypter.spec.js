@@ -1,6 +1,6 @@
 const Encrypter = require('./encrypter')
 
-const bcrypt = require('../../../__mocks__/bcryptjs')
+const bcrypt = require('../../../__mocks/bcryptjs')
 const MissingParamError = require('../presentation/errors/missing-param-error')
 
 function makeSut () {

@@ -1,4 +1,4 @@
-const jwt = require('../../../../../__mocks__/jsonwebtoken')
+const jwt = require('../../../../../__mocks/jsonwebtoken')
 
 const GenerateAccessTokenRepository = require('./generate-access-token-repository')
 const MissingParamError = require('../../../../utils/presentation/errors/missing-param-error')

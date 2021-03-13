@@ -1,6 +1,6 @@
 const request = require('supertest')
 
-const bcrypt = jest.requireActual('bcryptjs')
+const bcrypt = require('bcryptjs')
 
 const app = require('../../../../lib/app')
 const mongoHelper = require('../../../../lib/database')
