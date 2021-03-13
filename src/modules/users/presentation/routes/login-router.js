@@ -52,7 +52,7 @@ class LoginRouter {
       return HttpResponse.badRequest(new Error('password is wrong'))
     }
 
-    const accessToken = await this.generateAccessTokenRepository.sign(user._id)
+    const accessToken = await this.generateAccessTokenRepository.sign({ id: user._id })
     await this.updateAccessTokenRepository.update(user._id, accessToken)
 
     return HttpResponse.ok({ token: accessToken })
