@@ -12,9 +12,10 @@ const LoginRouterComposer = require('../composer/login-router-composer')
 
 router.get('/users/:id', ExpressAdapter.adapt(ListUserByIdComposer.compose()))
 router.get('/users', ExpressAdapter.adapt(ListUsersRouterComposer.compose()))
-router.post('/users', ExpressAdapter.adapt(CreateUserRouterComposer.compose()))
 router.put('/users/:id', ExpressAdapter.adapt(UpdateUsersRouterComposer.compose()))
 router.delete('/users/:id', ExpressAdapter.adapt(DeleteUserRoute.compose()))
+
+router.post('/signup', ExpressAdapter.adapt(CreateUserRouterComposer.compose()))
 router.post('/signin', ExpressAdapter.adapt(LoginRouterComposer.compose()))
 
 module.exports = router

@@ -26,7 +26,7 @@ describe('User routes', function () {
     }
 
     await request(app)
-      .post('/users')
+      .post('/signup')
       .send(fakeUser)
       .expect(200)
   })
